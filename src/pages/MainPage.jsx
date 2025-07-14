@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiBell, FiChevronDown } from 'react-icons/fi';
 import styled from 'styled-components';
@@ -69,6 +69,11 @@ const BellIcon = styled(FiBell)`
 `;
 
 const ProfileWrapper = styled.div`
+  position: relative;
+  z-index: 10;
+`;
+
+const ProfileClickable = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -77,7 +82,6 @@ const ProfileWrapper = styled.div`
   border-radius: 100px;
   gap: 12px;
   padding: 1px 1px;
-  position: relative;
   background-color: #E5E5E5;
   cursor: pointer;
   transition: filter 0.2s ease-in-out;
@@ -109,6 +113,40 @@ const DropdownArrow = styled(FiChevronDown)`
   color: #121212;
   margin-right: 12px;
   margin-top: 4px;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  background-color: #E5E5E5;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 11;
+`;
+
+const DropdownItem = styled.div`
+  padding: 14px 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: #121212;
+  cursor: pointer;
+  background-color: #E5E5E5;
+  transition: filter 0.2s ease-in-out;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid #ccc;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -143,6 +181,7 @@ const MapWrapper = styled.div`
   border-radius: 8px;
   overflow: hidden;
   position: relative;
+  z-index: 0;
 `;
 
 const ExpandButton = styled.img`
@@ -226,7 +265,10 @@ const CountDown = styled.span`
 const MainPage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [isDropdown, setIsDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
+  // 유저 정보 가져오기
   useEffect(() => {
     fetch('http://localhost:4000/auth/user', {
       credentials: 'include',
@@ -236,6 +278,19 @@ const MainPage = () => {
       .catch(err => console.error('유저 정보 가져오기 실패:', err));
   }, []);
 
+  // 외부 클릭 시 드롭다운 닫기
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // time PINT 리스트 더미데이터
   const dummyData = Array.from({ length: 10 }, (_, i) => ({
     id: i,
     label: '몰입캠프',
@@ -253,10 +308,18 @@ const MainPage = () => {
             <BellWrapper>
               <BellIcon />
             </BellWrapper>
-            <ProfileWrapper>
-              <ProfileImage src={user?.profileImage || ProfileImageTest} alt='profile_image' />
-              <Nickname>{user?.nickname || 'dumpling'}</Nickname>
-              <DropdownArrow />
+            <ProfileWrapper ref={dropdownRef}>
+              <ProfileClickable onClick={() => setIsDropdown(prev => !prev)}>
+                <ProfileImage src={user?.profileImage || ProfileImageTest} alt='profile_image' />
+                <Nickname>{user?.nickname || 'dumpling'}</Nickname>
+                <DropdownArrow />
+              </ProfileClickable>
+              {isDropdown && (
+                <DropdownMenu>
+                  <DropdownItem onClick={() => navigate('/mypage')}>마이페이지</DropdownItem>
+                  <DropdownItem onClick={() => navigate('/login')}>로그아웃</DropdownItem>
+                </DropdownMenu>
+              )}
             </ProfileWrapper>
           </UserWrapper>
         </HeaderWrapper>
