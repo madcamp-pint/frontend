@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -58,56 +58,30 @@ const Sidebar = () => {
     const location = useLocation();
 
     const topList = [
-        { path: '/main', dark: mainDarkgray, white: mainWhite },
-        { path: '/place', dark: placeDarkgray, white: placeWhite },
-        { path: '/time', dark: timeDarkgray, white: timeWhite },
+        { path: '/main', darkgray: mainDarkgray, white: mainWhite },
+        { path: '/place', darkgray: placeDarkgray, white: placeWhite },
+        { path: '/time', darkgray: timeDarkgray, white: timeWhite },
     ];
 
     const bottomList = [
-        { path: '/mypage', dark: userDarkgray, white: userWhite },
-        { path: '/logout', dark: logoutDarkgray, white: logoutWhite },
+        { path: '/mypage', darkgray: userDarkgray, white: userWhite },
+        { path: '/logout', darkgray: logoutDarkgray, white: logoutWhite },
     ];
 
     const renderIcons = (list) =>
-        list.map(({ path, dark, white, alt }) => (
+        list.map(({ path, darkgray, white }) => (
             <IconButton key={path} onClick={() => navigate(path)}>
-                <img src={location.pathname === path ? white : dark} />
+                <img src={location.pathname === path ? white : darkgray} />
             </IconButton>
         ));
 
     return (
         <Wrapper>
-            {/* main, place, time */}
+            {/* top : main, place, time */}
             <IconGroup>{renderIcons(topList)}</IconGroup>
-            {/* mypage, logout */}
+            {/* bottom : mypage, logout */}
             <IconGroup>{renderIcons(bottomList)}</IconGroup>
         </Wrapper>
-        // <Wrapper>
-        //     <IconGroup>
-        //         {/* 메인페이지 */}
-        //         <IconButton onClick={() => navigate('/main')}>
-        //             <FaHome />
-        //         </IconButton>
-        //         {/* placePint 페이지 */}
-        //         <IconButton onClick={() => navigate('/place')}>
-        //             <FaMapMarkerAlt />
-        //         </IconButton>
-        //         {/* timePint 페이지 */}
-        //         <IconButton onClick={() => navigate('/time')}>
-        //             <FaEnvelope />
-        //         </IconButton>
-        //     </IconGroup>
-        //     <IconGroup>
-        //         {/* 마이페이지 */}
-        //         <IconButton onClick={() => navigate('/mypage')}>
-        //             <FaUser />
-        //         </IconButton>
-        //         {/* 로그아웃 */}
-        //         <IconButton onClick={() => navigate('/logout')}>
-        //             <FaSignOutAlt />
-        //         </IconButton>
-        //     </IconGroup>
-        // </Wrapper>
     );
 }
 
