@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import KakaoMap from '../components/KakaoMap';
 import NewPost from '../components/NewPost';
-import smallEntireBox from '../assets/images/NewPost_png/small_entire_box.png';
 
 export default function PlacePintPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,7 +34,7 @@ export default function PlacePintPage() {
       {isModalOpen && (
         <div style={modalOverlayStyle}>
           <div style={modalContentStyle}>
-            <div style={modalInnerContentStyle}>
+            <div style={modalInnerContentStyle} className="no-scrollbar">
               <NewPost onClose={closeModal} />
             </div>
           </div>
@@ -59,16 +58,16 @@ const modalOverlayStyle = {
 };
 
 const modalContentStyle = {
-  backgroundImage: `url(${smallEntireBox})`,
-  backgroundSize: 'contain',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
+  width: '433px',
+  height: '668px',
+  flexShrink: 0,
+  borderRadius: '18px',
+  background: '#FFF',
   position: 'relative',
-  width: '100vw', // 화면 너비의 80%를 최대 너비로 사용
-  height: '70vh', // 이미지의 실제 비율로 설정 (예: 300px / 400px = 3/4)
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  overflow: 'hidden',
 };
 
 const modalInnerContentStyle = {
