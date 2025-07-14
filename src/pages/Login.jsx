@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import mapImage from '../assets/images/map.png';
-import logoImage from '../assets/images/logo.png';
+import logoImage from '../assets/images/logo_white.png';
 
 const Wrapper = styled.div`
   width: 100vw;
