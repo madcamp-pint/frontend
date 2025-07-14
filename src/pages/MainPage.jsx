@@ -7,7 +7,8 @@ import Sidebar from '../components/Sidebar';
 import ProfileImageTest from '../assets/images/profile_image_test.png';
 import placePintIcon from '../assets/images/place_pint.png';
 import timePintIcon from '../assets/images/time_pint.png';
-//import KaKaoMap from '../components/KaKaoMap';
+import expandIcon from '../assets/images/expand_icon.png';
+import KaKaoMap from '../components/KaKaoMap';
 
 const Wrapper = styled.div`
   display: flex;
@@ -140,6 +141,23 @@ const MapWrapper = styled.div`
   border: 1px solid #777777;
   border-radius: 8px;
   overflow: hidden;
+  position: relative;
+`;
+
+const ExpandButton = styled.img`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 1;
+  
+  &:hover {
+    opacity: 1;
+  }
 `;
 
 const TimePintWrapper = styled.div`
@@ -240,9 +258,16 @@ const MainPage = () => {
               <Icon src={placePintIcon} alt='place_pint_icon' />
               <TitleText>place PINT</TitleText>
             </TitleWrapper>
+            
             {/* <KaKaoMap /> */}
-            <MapWrapper></MapWrapper>
-            <div></div>
+            <MapWrapper>
+              <KaKaoMap width="100%" height="320px" />
+              <ExpandButton
+                src={expandIcon}
+                alt='expand'
+                onClick={() => navigate('/place')}
+               />
+            </MapWrapper>
           </PlacePintWrapper>
 
           {/* Time Pint */}
