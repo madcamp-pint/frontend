@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
-import KakaoCallback from './pages/KaKaoCallback';
+import KakaoCallback from './pages/KakaoCallback';
 import MainPage from './pages/MainPage';
 import PlacePintPage from './pages/PlacePintPage';
 import TimePintPage from './pages/TimePintPage';
