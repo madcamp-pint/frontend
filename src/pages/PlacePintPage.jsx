@@ -58,7 +58,7 @@ const Wrapper = styled.div`
 
 const MapWrapper = styled.div`
   flex: 1;
-  margin: 20px;
+  margin: 20px 20px 20px 8px;
   border-radius: 20px;
   overflow: hidden;
 `;
