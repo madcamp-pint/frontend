@@ -8,7 +8,7 @@ import ProfileImageTest from '../assets/images/profile_image_test.png';
 import placePintIcon from '../assets/images/place_pint.png';
 import timePintIcon from '../assets/images/time_pint.png';
 import expandIcon from '../assets/images/expand_icon.png';
-import KaKaoMap from '../components/KaKaoMap';
+import KakaoMap from '../components/KakaoMap';
 
 const Wrapper = styled.div`
   display: flex;
@@ -262,7 +262,7 @@ const MainPage = () => {
             
             {/* <KaKaoMap /> */}
             <MapWrapper>
-              <KaKaoMap width="100%" height="320px" />
+              <KakaoMap width="100%" height="320px" />
               <ExpandButton
                 src={expandIcon}
                 alt='expand'
