@@ -95,24 +95,9 @@ const KaKaoLoginButton = styled.button`
 
 function Login() {
   //const navigate = useNavigate();
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = `https://developers.kakao.com/sdk/js/kakao.js`;
-    script.async = true;
-    script.onload = () => {
-      if (!window.Kakao.isInitialized()) {
-        window.Kakao.init(import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY);
-        console.log('Kakao SDK 초기화');
-      }
-    };
-    document.head.appendChild(script);
-  }, []);
 
   const handleKakaoLogin = () => {
-    const redirectUri = 'http://localhost:3000/auth/kakao/callback';
-    window.Kakao.Auth.authorize({
-      redirectUri,
-    });
+    window.location.href = 'http://localhost:4000/auth/kakao';
   };
 
   return (
