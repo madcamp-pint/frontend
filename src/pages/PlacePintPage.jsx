@@ -124,4 +124,5 @@ const ModalInnerContent = styled.div`
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera*/
   }
+  padding: 0 0 10px 0;
 `;

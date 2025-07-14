@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 
 import mText1 from "../assets/images/NewPost_png/10m_text.png";
 import mText2 from "../assets/images/NewPost_png/50m_text.png";
 import mText from "../assets/images/NewPost_png/100m_text.png";
-import IMG8299Png from "../assets/images/NewPost_png/IMG_8299.png.png";
-import VID1349Mp4 from "../assets/images/NewPost_png/VID_1349.mp4.png";
+
 import captionInstruction from "../assets/images/NewPost_png/caption_instruction.png";
 import captionTitle from "../assets/images/NewPost_png/caption_title.png";
 import image from "../assets/images/NewPost_png/핀트 이름을 입력하세요.png";
@@ -23,7 +22,6 @@ import tagSelectedBox from "../assets/images/NewPost_png/tag_selected_box.png";
 import tagTitle from "../assets/images/NewPost_png/tag_title.png";
 import unlockTitle from "../assets/images/NewPost_png/unlock_title.png";
 import uploadBox from "../assets/images/NewPost_png/upload_box.png";
-import uploadFileNameBox from "../assets/images/NewPost_png/upload_file_name_box.png";
 import uploadMax from "../assets/images/NewPost_png/upload_max.png";
 import uploadPlusIcon from "../assets/images/NewPost_png/upload_plus_icon.png";
 import uploadTitle from "../assets/images/NewPost_png/upload_title.png";
@@ -38,12 +36,21 @@ import publicEntireBox from "../assets/images/NewPost_png/public_entire_box.png"
 import publicSelectedBoxImg from "../assets/images/NewPost_png/public_selected_box.png";
 import unlockEntireBox from "../assets/images/NewPost_png/unlock_entire_box.png";
 import unlockSelectedBoxImg from "../assets/images/NewPost_png/unlock_selected_box.png";
+import rectangle240652345 from "../assets/images/NewPost_png/Rectangle 240652345.png";
 
 // styled-components
 const ComponentWrapper = styled.div`
   height: 1084px;
   width: 433px;
   overflow-x: hidden;
+  padding-bottom: 47px;
+  position: relative;
+  /* Hide scrollbar for all browsers */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
 `;
 
 const OverlapGroup = styled.div`
@@ -214,6 +221,70 @@ const CaptionTitle = styled.img`
   width: 62px;
 `;
 
+const CaptionTextarea = styled.textarea`
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  color: #000;
+  box-sizing: border-box;
+  resize: none;
+  overflow-y: auto;
+  padding: 23px;
+  margin: 0;
+  line-height: 1.5;
+  vertical-align: top;
+  &:focus {
+    outline: none;
+  }
+`;
+
+const CaptionDisplay = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  color: #000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  cursor: pointer;
+  box-sizing: border-box;
+  padding: 23px;
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+`;
+
+const CaptionInput = styled.input`
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  color: #000;
+  box-sizing: border-box;
+  /* padding-left removed for full width */
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: #aaa;
+  }
+`;
+
 const LocationTextWrapper = styled.div`
   background-image: url(${locationAddrBox});
   background-size: 100% 100%;
@@ -309,41 +380,56 @@ const UploadBox = styled.img`
   width: 346px;
 `;
 
-const UploadFileNameBox = styled.img`
-  height: 28px;
-  left: 0;
-  position: absolute;
-  top: 52px;
-  width: 113px;
+const UploadFileNameBox = styled.div`
+  width: 107px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #FFF;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: 3px;
+  margin-left: 4px;
 `;
 
-const ImgPng = styled.img`
+const DeleteButton = styled.div`
+  display: flex;
+  width: 21px;
   height: 11px;
-  left: 23px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #D1D1D1;
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 100;
+  line-height: normal;
+  cursor: pointer;
   position: absolute;
-  top: 62px;
-  width: 68px;
+  left: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  z-index: 10;
 `;
 
-const Rectangle = styled.img`
-  height: 28px;
-  left: 111px;
-  position: absolute;
-  top: 52px;
-  width: 113px;
-`;
 
-const VID = styled.img`
-  height: 11px;
-  left: 133px;
-  position: absolute;
-  top: 62px;
-  width: 69px;
-`;
+
+
+
+
 
 const UploadMax = styled.img`
   height: 10px;
-  left: 145px;
+  left: 155px; /* Adjusted position */
   position: absolute;
   top: 23px;
   width: 61px;
@@ -351,10 +437,40 @@ const UploadMax = styled.img`
 
 const UploadPlusIcon = styled.img`
   height: 10px;
-  left: 130px;
+  left: 140px; /* Adjusted position */
   position: absolute;
   top: 23px;
   width: 9px;
+`;
+
+
+
+const UploadedFileNameText = styled.div`
+  display: flex;
+  width: 79px;
+  height: 16px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #000;
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 100;
+  line-height: 11px; /* Adjusted line-height */
+`;
+
+const UploadedFilesContainer = styled.div`
+  position: absolute;
+  top: 52px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0px; /* Adjusted gap for no vertical spacing */
+  padding: 0; /* Remove horizontal padding for alignment */
+  box-sizing: border-box;
 `;
 
 const CaptionInstructionWrapper = styled.div`
@@ -458,6 +574,83 @@ const Radius100m = styled(RadiusText)`
   width: 36px;
 `;
 
+const SaveButton = styled.button`
+  width: 83px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 15px;
+  background: rgba(109, 235, 238, 0.50);
+  border: none;
+  color: #222;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+`;
+
+const SaveButtonText = styled.span`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  color: #000;
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 100;
+  line-height: normal;
+`;
+
+const BottomButtonRow = styled.div`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 16px 16px;
+  box-sizing: border-box;
+  background: transparent;
+`;
+
+const CancelButton = styled.button`
+  width: 83px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 15px;
+  background: url(${rectangle240652345}) no-repeat center/cover;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-sizing: border-box;
+`;
+
+const CancelButtonText = styled.span`
+  display: flex;
+  width: 46px;
+  height: 15px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #000;
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 100;
+  line-height: normal;
+`;
+
 // Component
 export const Component = ({ onClose, address }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -466,6 +659,10 @@ export const Component = ({ onClose, address }) => {
   const [isEditingHint, setIsEditingHint] = useState(false);
   const [locationHint, setLocationHint] = useState("");
   const [visibility, setVisibility] = useState('public');
+  const fileInputRef = useRef(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [caption, setCaption] = useState("");
+  const [isEditingCaption, setIsEditingCaption] = useState(false);
 
   const handlePintNameClick = () => {
     setIsEditing(true);
@@ -473,6 +670,17 @@ export const Component = ({ onClose, address }) => {
 
   const handlePintNameBlur = () => {
     setIsEditing(false);
+  };
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files); // Convert FileList to Array
+    if (files.length > 0) {
+      setSelectedFiles(prevFiles => [...prevFiles, ...files]); // Add new files to existing ones
+    }
+  };
+
+  const handleRemoveFile = (indexToRemove) => {
+    setSelectedFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
   const renderPintName = () => {
@@ -552,18 +760,53 @@ export const Component = ({ onClose, address }) => {
           )}
         </LocationHintTextWrapper>
 
-        <Div>
+        <Div onClick={() => fileInputRef.current.click()}>
           <UploadBox alt="Upload box" src={uploadBox} />
-          <UploadFileNameBox alt="Upload file name box" src={uploadFileNameBox} />
-          <ImgPng alt="Img png" src={IMG8299Png} />
-          <Rectangle alt="Rectangle" src={rectangle240652343} />
-          <VID alt="Vid" src={VID1349Mp4} />
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+            accept="image/*,video/*"
+            multiple
+          />
           <UploadMax alt="Upload max" src={uploadMax} />
           <UploadPlusIcon alt="Upload plus icon" src={uploadPlusIcon} />
+          {selectedFiles.length > 0 && (
+            <UploadedFilesContainer>
+              {selectedFiles.map((file, index) => (
+                <UploadFileNameBox key={index}>
+                  <DeleteButton onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering file input click
+                    handleRemoveFile(index);
+                  }}>x</DeleteButton>
+                  <UploadedFileNameText>{file.name}</UploadedFileNameText>
+                </UploadFileNameBox>
+              ))}
+            </UploadedFilesContainer>
+          )}
         </Div>
 
         <CaptionInstructionWrapper>
-          <CaptionInstruction alt="Caption instruction" src={captionInstruction} />
+          {isEditingCaption ? (
+            <CaptionTextarea
+              value={caption}
+              onChange={e => setCaption(e.target.value)}
+              onBlur={() => setIsEditingCaption(false)}
+              autoFocus
+            />
+          ) : caption ? (
+            <CaptionDisplay onClick={() => setIsEditingCaption(true)}>
+              {caption}
+            </CaptionDisplay>
+          ) : (
+            <CaptionInstruction
+              alt="Caption instruction"
+              src={captionInstruction}
+              style={{ cursor: 'pointer', zIndex: 2 }}
+              onClick={() => setIsEditingCaption(true)}
+            />
+          )}
         </CaptionInstructionWrapper>
 
         <VisibilityWrapper>
@@ -580,6 +823,10 @@ export const Component = ({ onClose, address }) => {
         </Overlap3>
 
       </OverlapGroup>
+      <BottomButtonRow>
+        <CancelButton onClick={onClose}><CancelButtonText>취소</CancelButtonText></CancelButton>
+        <SaveButton><SaveButtonText>저장</SaveButtonText></SaveButton>
+      </BottomButtonRow>
     </ComponentWrapper>
   );
 };
