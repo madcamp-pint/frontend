@@ -117,6 +117,7 @@ const ContentWrapper = styled.div`
 
 const TitleWrapper = styled.div`
   display: flex;
+  cursor: pointer;
 `;
 
 const Icon = styled.img`
@@ -254,7 +255,7 @@ const MainPage = () => {
         <ContentWrapper>
           {/* Place Pint */}
           <PlacePintWrapper>
-            <TitleWrapper>
+            <TitleWrapper onClick={() => navigate('/place')}>
               <Icon src={placePintIcon} alt='place_pint_icon' />
               <TitleText>place PINT</TitleText>
             </TitleWrapper>
@@ -272,7 +273,7 @@ const MainPage = () => {
 
           {/* Time Pint */}
           <TimePintWrapper>
-            <TitleWrapper>
+            <TitleWrapper onClick={() => navigate('/time')}>
               <Icon src={timePintIcon} alt='time_pint_icon' />
               <TitleText>time PINT</TitleText>
             </TitleWrapper>
