@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Sidebar from '../components/Sidebar';
 import KakaoMap from '../components/KakaoMap';
 import NewPost from '../components/NewPost';
 import smallEntireBox from '../assets/images/NewPost_png/small_entire_box.png';
@@ -26,24 +27,41 @@ export default function PlacePintPage() {
   };
 
   return (
-    <div>
-      <KakaoMap 
-        width="100vw" 
-        height="100vh" 
-        onMapClick={handleMapClick} 
-      />
-      {isModalOpen && (
-        <div style={modalOverlayStyle}>
-          <div style={modalContentStyle}>
-            <div style={modalInnerContentStyle}>
-              <NewPost onClose={closeModal} />
+    <div style={wrapper}>
+      <Sidebar />
+      <div style={mapWrapper}>
+        <KakaoMap 
+          width="100vw" 
+          height="100vh" 
+          onMapClick={handleMapClick} 
+        />
+        {isModalOpen && (
+          <div style={modalOverlayStyle}>
+            <div style={modalContentStyle}>
+              <div style={modalInnerContentStyle}>
+                <NewPost onClose={closeModal} />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
+
+const wrapper = {
+  display: 'flex', 
+  width: '100vw', 
+  height: '100vh', 
+  backgroundColor: '#121212'
+};
+
+const mapWrapper = {
+  flex: 1,
+  margin: '20px',
+  borderRadius: '20px',
+  overflow: 'hidden'
+};
 
 const modalOverlayStyle = {
   position: 'fixed',
