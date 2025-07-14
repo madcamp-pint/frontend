@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import mapImage from '../assets/images/map.png';
 import logoImage from '../assets/images/logo_white.png';
@@ -95,9 +95,24 @@ const KaKaoLoginButton = styled.button`
 
 function Login() {
   //const navigate = useNavigate();
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `https://developers.kakao.com/sdk/js/kakao.js`;
+    script.async = true;
+    script.onload = () => {
+      if (!window.Kakao.isInitialized()) {
+        window.Kakao.init(import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY);
+        console.log('Kakao SDK 초기화');
+      }
+    };
+    document.head.appendChild(script);
+  }, []);
 
-  const handleLogin = () => {
-    // 카카오 로그인
+  const handleKakaoLogin = () => {
+    const redirectUri = 'http://localhost:3000/auth/kakao/callback';
+    window.Kakao.Auth.authorize({
+      redirectUri,
+    });
   };
 
   return (
@@ -114,7 +129,7 @@ function Login() {
         <SubText>당신만의 타임캡슐을 남겨보세요.</SubText>
 
         {/* 카카오 로그인 */}
-        <KaKaoLoginButton onClick={handleLogin}>
+        <KaKaoLoginButton onClick={handleKakaoLogin}>
           <svg xmlns="http://www.w3.org/2000/svg" width="29" height="27" viewBox="0 0 29 27" fill="none">
             <path d="M14.5 25.316C22.5076 25.316 29 19.6488 29 12.658C29 5.66716 22.5076 0 14.5 0C6.49237 0 0 5.66716 0 12.658C0 15.8406 1.34669 18.7519 3.57063 20.9761C3.39481 22.8133 2.81481 24.8277 2.17319 26.3395C2.03 26.6758 2.30731 27.0519 2.668 26.9941C6.757 26.325 9.18756 25.2979 10.2443 24.7626C11.6322 25.1333 13.0632 25.3193 14.5 25.316Z" fill="#121212"/>
           </svg>
