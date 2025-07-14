@@ -11,13 +11,13 @@ const Wrapper = styled.div`
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding-top; 20px;
 `;
 
 const IconGroup = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 16px 0;
 `;
 
 const IconButton = styled.button`
@@ -25,8 +25,8 @@ const IconButton = styled.button`
     border: none;
     outline: none;
     color: #777777;
-    font-size: 22px;
-    margin: 20px 0;
+    font-size: 28px;
+    margin: 28px 0;
     cursor: pointer;
 
     &:hover {
