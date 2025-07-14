@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiBell, FiChevronDown } from 'react-icons/fi';
 import styled from 'styled-components';
@@ -89,8 +89,8 @@ const ProfileWrapper = styled.div`
 
 const ProfileImage = styled.img`
   width: 50px;
-  height: auto;
-  object-fit: contain;
+  height: 50px;
+  object-fit: cover;
   border-radius: 50%;
   margin-left: 6px;
 `;
@@ -225,6 +225,16 @@ const CountDown = styled.span`
 
 const MainPage = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetch('http://localhost:4000/auth/user', {
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => setUser(data))
+      .catch(err => console.error('유저 정보 가져오기 실패:', err));
+  }, []);
 
   const dummyData = Array.from({ length: 10 }, (_, i) => ({
     id: i,
@@ -244,8 +254,8 @@ const MainPage = () => {
               <BellIcon />
             </BellWrapper>
             <ProfileWrapper>
-              <ProfileImage src={ProfileImageTest} alt='profile_image' />
-              <Nickname>dumpling</Nickname>
+              <ProfileImage src={user?.profileImage || ProfileImageTest} alt='profile_image' />
+              <Nickname>{user?.nickname || 'dumpling'}</Nickname>
               <DropdownArrow />
             </ProfileWrapper>
           </UserWrapper>
