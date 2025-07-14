@@ -57,7 +57,7 @@ const wrapper = {
 
 const mapWrapper = {
   flex: 1,
-  margin: '20px',
+  margin: '20px 20px 20px 8px',
   borderRadius: '20px',
   overflow: 'hidden'
 };
