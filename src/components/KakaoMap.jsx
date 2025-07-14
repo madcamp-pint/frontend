@@ -3,6 +3,12 @@ import React, { useEffect, useRef } from 'react';
 const KakaoMap = ({ width, height, onMapClick }) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
+    const onMapClickRef = useRef(onMapClick); // Ref to store the latest onMapClick prop
+
+    // Update the ref whenever onMapClick prop changes
+    useEffect(() => {
+        onMapClickRef.current = onMapClick;
+    }, [onMapClick]);
 
     useEffect(() => {
         const script = document.createElement('script');
@@ -13,6 +19,7 @@ const KakaoMap = ({ width, height, onMapClick }) => {
         script.onload = () => {
             window.kakao.maps.load(() => {
                 console.log('Kakao Map API loaded and ready. Initializing map...');
+                console.log('Kakao Maps Services object:', window.kakao.maps.services);
                 const container = mapContainer.current;
 
                 if (!container) {
@@ -30,15 +37,17 @@ const KakaoMap = ({ width, height, onMapClick }) => {
                     map.current = new window.kakao.maps.Map(container, options);
 
                     // 지도 클릭 이벤트 리스너 추가
-                    if (onMapClick) {
-                        window.kakao.maps.event.addListener(map.current, 'click', function(mouseEvent) {
-                            const latLng = mouseEvent.latLng;
-                            onMapClick({
+                    window.kakao.maps.event.addListener(map.current, 'click', function(mouseEvent) {
+                        const latLng = mouseEvent.latLng;
+                        console.log("Map clicked at:", latLng.getLat(), latLng.getLng());
+                        if (onMapClickRef.current) {
+                            onMapClickRef.current({
                                 lat: latLng.getLat(),
                                 lng: latLng.getLng(),
                             });
-                        });
-                    }
+                        }
+                        map.current.setCenter(latLng);
+                    });
                 };
 
                 // Geolocation API 사용 가능 여부 확인
@@ -69,9 +78,16 @@ const KakaoMap = ({ width, height, onMapClick }) => {
 
         return () => {
             document.head.removeChild(script);
+            if (map.current) {
+                // Kakao Map API does not have a direct destroy method for the map instance.
+                // To prevent memory leaks, you might need to manually clear event listeners
+                // or rely on garbage collection if the container element is removed.
+                // For now, setting map.current to null is a common practice.
+                map.current = null;
+            }
             console.log('KakaoMap useEffect cleanup.');
         };
-    }, [onMapClick]);
+    }, []); // Empty dependency array: runs only once on mount
 
     return (
         <div

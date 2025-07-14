@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import KakaoMap from '../components/KakaoMap';
@@ -17,7 +17,8 @@ export default function PlacePintPage() {
     };
   }, []);
 
-  const handleMapClick = (position) => {
+  const handleMapClick = useCallback((position) => {
+    console.log("Clicked position:", position);
     setClickedPosition(position);
     setIsModalOpen(true);
 
@@ -30,6 +31,7 @@ export default function PlacePintPage() {
         if (status === window.kakao.maps.services.Status.OK) {
           if (result[0].address) {
             setAddress(result[0].address.address_name);
+            console.log("Resolved address:", result[0].address.address_name);
           } else {
             setAddress("주소를 찾을 수 없습니다.");
           }
@@ -42,7 +44,7 @@ export default function PlacePintPage() {
       setAddress("카카오맵 서비스 로드 안됨");
       console.error("Kakao Maps services not loaded.");
     }
-  };
+  }, []); // Empty dependency array to memoize the function
 
   const closeModal = () => {
     setIsModalOpen(false);
