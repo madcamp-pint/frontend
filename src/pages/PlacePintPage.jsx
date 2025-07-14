@@ -7,6 +7,7 @@ import { Component as NewPost } from '../components/NewPost';
 export default function PlacePintPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedPosition, setClickedPosition] = useState(null);
+  const [address, setAddress] = useState(""); // New state for address
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -19,11 +20,34 @@ export default function PlacePintPage() {
   const handleMapClick = (position) => {
     setClickedPosition(position);
     setIsModalOpen(true);
+
+    // Perform reverse geocoding
+    if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      const coord = new window.kakao.maps.LatLng(position.lat, position.lng);
+
+      geocoder.coord2Address(coord.getLng(), coord.getLat(), (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          if (result[0].address) {
+            setAddress(result[0].address.address_name);
+          } else {
+            setAddress("주소를 찾을 수 없습니다.");
+          }
+        } else {
+          setAddress("주소 변환 실패");
+          console.error("Geocoder failed:", status);
+        }
+      });
+    } else {
+      setAddress("카카오맵 서비스 로드 안됨");
+      console.error("Kakao Maps services not loaded.");
+    }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setClickedPosition(null);
+    setAddress(""); // Clear address when modal closes
   };
 
   return (
@@ -39,7 +63,7 @@ export default function PlacePintPage() {
           <ModalOverlay>
             <ModalContent>
               <ModalInnerContent>
-                <NewPost onClose={closeModal} />
+                <NewPost onClose={closeModal} address={address} /> {/* Pass address prop */}
               </ModalInnerContent>
             </ModalContent>
           </ModalOverlay>

@@ -7,7 +7,7 @@ const KakaoMap = ({ width, height, onMapClick }) => {
     useEffect(() => {
         const script = document.createElement('script');
         script.async = true;
-        script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY}&autoload=false`;
+        script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY}&libraries=services&autoload=false`;
         document.head.appendChild(script);
 
         script.onload = () => {

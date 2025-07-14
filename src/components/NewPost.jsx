@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import mText1 from "../assets/images/NewPost_png/10m_text.png";
@@ -8,20 +8,15 @@ import IMG8299Png from "../assets/images/NewPost_png/IMG_8299.png.png";
 import VID1349Mp4 from "../assets/images/NewPost_png/VID_1349.mp4.png";
 import captionInstruction from "../assets/images/NewPost_png/caption_instruction.png";
 import captionTitle from "../assets/images/NewPost_png/caption_title.png";
-import image2 from "../assets/images/NewPost_png/이연재.png";
 import image from "../assets/images/NewPost_png/핀트 이름을 입력하세요.png";
-import locationHintText from "../assets/images/NewPost_png/location_hint_text.png";
-import locationText from "../assets/images/NewPost_png/location_text.png";
+import locationHintTextImg from "../assets/images/NewPost_png/location_hint_text.png";
 import locationTitle from "../assets/images/NewPost_png/location_title.png";
-import publicPrivateText from "../assets/images/NewPost_png/public_private_text.png";
-import publicPublicText from "../assets/images/NewPost_png/public_public_text.png";
+import publicPrivateTextImg from "../assets/images/NewPost_png/public_private_text.png";
+import publicPublicTextImg from "../assets/images/NewPost_png/public_public_text.png";
 import publicTitle from "../assets/images/NewPost_png/public_title.png";
-import rectangle240652340 from "../assets/images/NewPost_png/Rectangle 240652340.png";
 import rectangle240652343 from "../assets/images/NewPost_png/Rectangle 240652343.png";
 import tagEntireBox from "../assets/images/NewPost_png/tag_entire_box.png";
-import tagFriendBox from "../assets/images/NewPost_png/tag_friend_box.png";
 import tagFriendId from "../assets/images/NewPost_png/tag_friend_id.png";
-import tagFriendName from "../assets/images/NewPost_png/tag_friend_name.png";
 import tagPrivateText from "../assets/images/NewPost_png/tag_private_text.png";
 import tagSearchIcon from "../assets/images/NewPost_png/tag_search_icon.png";
 import tagSelectedBox from "../assets/images/NewPost_png/tag_selected_box.png";
@@ -40,13 +35,13 @@ import locationAddrBox from "../assets/images/NewPost_png/location_addr_box.png"
 import locationHintBox from "../assets/images/NewPost_png/location_hint_box.png";
 import captionBox from "../assets/images/NewPost_png/caption_box.png";
 import publicEntireBox from "../assets/images/NewPost_png/public_entire_box.png";
-import publicSelectedBox from "../assets/images/NewPost_png/public_selected_box.png";
+import publicSelectedBoxImg from "../assets/images/NewPost_png/public_selected_box.png";
 import unlockEntireBox from "../assets/images/NewPost_png/unlock_entire_box.png";
-import unlockSelectedBox from "../assets/images/NewPost_png/unlock_selected_box.png";
+import unlockSelectedBoxImg from "../assets/images/NewPost_png/unlock_selected_box.png";
 
 // styled-components
 const ComponentWrapper = styled.div`
-  height: 1148px;
+  height: 1084px;
   width: 433px;
   overflow-x: hidden;
 `;
@@ -54,7 +49,7 @@ const ComponentWrapper = styled.div`
 const OverlapGroup = styled.div`
   background-image: url(${entireBox});
   background-size: 105% 105%;
-  height: 1148px;
+  height: 1084px;
   left: -4px;
   position: relative;
   width: 433px;
@@ -122,6 +117,44 @@ const Img = styled.img`
   position: absolute;
   top: 39px;
   width: 285px;
+  cursor: pointer;
+`;
+
+const PintNameInput = styled.input`
+  height: 27px;
+  left: 49px;
+  position: absolute;
+  top: 39px;
+  width: 285px;
+  background-color: transparent;
+  border: none;
+  font-size: 27px;
+  color: #000;
+  padding-left: 5px;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: #aaa;
+  }
+`;
+
+const PintNameDisplay = styled.div`
+  height: 27px;
+  left: 49px;
+  position: absolute;
+  top: 39px;
+  width: 285px;
+  font-size: 27px;
+  color: #000;
+  padding-left: 5px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 `;
 
 const Vector2 = styled.img`
@@ -169,7 +202,7 @@ const UploadTitle = styled.img`
   height: 15px;
   left: 51px;
   position: absolute;
-  top: 653px;
+  top: 622px;
   width: 95px;
 `;
 
@@ -177,7 +210,7 @@ const CaptionTitle = styled.img`
   height: 15px;
   left: 55px;
   position: absolute;
-  top: 794px;
+  top: 763px;
   width: 62px;
 `;
 
@@ -189,14 +222,19 @@ const LocationTextWrapper = styled.div`
   position: absolute;
   top: 128px;
   width: 337px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  box-sizing: border-box;
 `;
 
-const LocationText = styled.img`
-  height: 14px;
-  left: 15px;
-  position: absolute;
-  top: 16px;
-  width: 196px;
+const LocationAddressText = styled.div`
+  font-size: 16px;
+  color: #333;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const LocationHintTextWrapper = styled.div`
@@ -207,21 +245,59 @@ const LocationHintTextWrapper = styled.div`
   position: absolute;
   top: 180px;
   width: 345px;
+  position: relative;
 `;
 
-const LocationHintText = styled.img`
+const LocationHintPlaceholder = styled.img`
   height: 16px;
   left: 19px;
   position: absolute;
   top: 20px;
   width: 191px;
+  cursor: pointer;
+`;
+
+const LocationHintInput = styled.input`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: transparent;
+  border: none;
+  padding: 20px 19px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: #333;
+
+  &:focus {
+    outline: none;
+  }
+  &::placeholder {
+    color: #aaa;
+  }
+`;
+
+const LocationHintDisplay = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 20px 19px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 `;
 
 const Div = styled.div`
   height: 80px;
   left: 46px;
   position: absolute;
-  top: 678px;
+  top: 647px;
   width: 346px;
 `;
 
@@ -287,7 +363,7 @@ const CaptionInstructionWrapper = styled.div`
   height: 280px;
   left: 46px;
   position: absolute;
-  top: 826px;
+  top: 792px;
   width: 346px;
 `;
 
@@ -299,7 +375,7 @@ const CaptionInstruction = styled.img`
   width: 138px;
 `;
 
-const Overlap2 = styled.div`
+const VisibilityWrapper = styled.div`
   background-image: url(${publicEntireBox});
   background-size: 100% 100%;
   height: 47px;
@@ -309,29 +385,30 @@ const Overlap2 = styled.div`
   width: 337px;
 `;
 
-const PublicPublicTextWrapper = styled.div`
-  background-image: url(${publicSelectedBox});
-  background-size: 100% 100%;
+const VisibilitySelectedBox = styled.img`
   height: 41px;
-  left: 3px;
+  width: 164px;
   position: absolute;
   top: 3px;
-  width: 164px;
+  left: ${({ 'data-visibility': visibility }) => (visibility === 'public' ? '3px' : '170px')};
+  transition: left 0.3s ease-in-out;
 `;
 
-const PublicPublicText = styled.img`
-  height: 14px;
-  left: 69px;
+const VisibilityText = styled.img`
   position: absolute;
-  top: 13px;
+  top: 16px;
+  height: 14px;
+  cursor: pointer;
+  z-index: 1;
+`;
+
+const PublicText = styled(VisibilityText)`
+  left: 69px;
   width: 27px;
 `;
 
-const PublicPrivateText = styled.img`
-  height: 14px;
+const PrivateText = styled(VisibilityText)`
   left: 224px;
-  position: absolute;
-  top: 16px;
   width: 40px;
 `;
 
@@ -345,83 +422,89 @@ const Overlap3 = styled.div`
   width: 337px;
 `;
 
-const ElementTextWrapper = styled.div`
-  background-image: url(${unlockSelectedBox});
-  background-size: 100% 100%;
+const UnlockSelectedBox = styled.img`
   height: 41px;
-  left: 3px;
   position: absolute;
   top: 3px;
   width: 109px;
+  left: ${({ 'data-radius': radius }) => {
+    if (radius === 50) return '113px';
+    if (radius === 100) return '226px';
+    return '3px';
+  }};
+  transition: left 0.3s ease-in-out;
 `;
 
-const ElementText = styled.img`
+const RadiusText = styled.img`
   height: 12px;
-  left: 39px;
   position: absolute;
-  top: 15px;
+  top: 18px;
+  cursor: pointer;
+  z-index: 1;
+`;
+
+const Radius10m = styled(RadiusText)`
+  left: 39px;
   width: 28px;
 `;
 
-const ElementMText = styled.img`
-  height: 12px;
+const Radius50m = styled(RadiusText)`
   left: 153px;
-  position: absolute;
-  top: 18px;
   width: 29px;
 `;
 
-const ElementText2 = styled.img`
-  height: 12px;
+const Radius100m = styled(RadiusText)`
   left: 262px;
-  position: absolute;
-  top: 18px;
   width: 36px;
 `;
 
-const Overlap4 = styled.div`
-  height: 28px;
-  left: 47px;
-  position: absolute;
-  top: 589px;
-  width: 127px;
-`;
-
-const TagFriendBox = styled.img`
-  height: 28px;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 65px;
-`;
-
-const TagFriendName = styled.img`
-  height: 10px;
-  left: 18px;
-  position: absolute;
-  top: 9px;
-  width: 28px;
-`;
-
-const Rectangle2 = styled.img`
-  height: 28px;
-  left: 62px;
-  position: absolute;
-  top: 0;
-  width: 65px;
-`;
-
-const Img2 = styled.img`
-  height: 10px;
-  left: 80px;
-  position: absolute;
-  top: 9px;
-  width: 28px;
-`;
-
-
 // Component
-export const Component = () => {
+export const Component = ({ onClose, address }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [pintName, setPintName] = useState("");
+  const [selectedRadius, setSelectedRadius] = useState(10);
+  const [isEditingHint, setIsEditingHint] = useState(false);
+  const [locationHint, setLocationHint] = useState("");
+  const [visibility, setVisibility] = useState('public');
+
+  const handlePintNameClick = () => {
+    setIsEditing(true);
+  };
+
+  const handlePintNameBlur = () => {
+    setIsEditing(false);
+  };
+
+  const renderPintName = () => {
+    if (isEditing) {
+      return (
+        <PintNameInput
+          type="text"
+          value={pintName}
+          onChange={(e) => setPintName(e.target.value)}
+          onBlur={handlePintNameBlur}
+          autoFocus
+        />
+      );
+    }
+
+    if (pintName) {
+      return (
+        <PintNameDisplay onClick={handlePintNameClick}>
+          {pintName}
+        </PintNameDisplay>
+      );
+    }
+
+    return (
+      <Img
+        alt="핀트 이름을 입력하세요"
+        src={image}
+        onClick={handlePintNameClick}
+      />
+    );
+  };
+
   return (
     <ComponentWrapper>
       <OverlapGroup>
@@ -434,7 +517,7 @@ export const Component = () => {
           <TagSearchIcon alt="Tag search icon" src={tagSearchIcon} />
         </Overlap>
 
-        <Img alt="Img" src={image} />
+        {renderPintName()}
         <Vector2 alt="Vector" src={vector13892} />
         <LocationTitle alt="Location title" src={locationTitle} />
         <UnlockTitle alt="Unlock title" src={unlockTitle} />
@@ -444,11 +527,29 @@ export const Component = () => {
         <CaptionTitle alt="Caption title" src={captionTitle} />
 
         <LocationTextWrapper>
-          <LocationText alt="Location text" src={locationText} />
+          <LocationAddressText>{address || "주소를 불러오는 중..."}</LocationAddressText>
         </LocationTextWrapper>
 
         <LocationHintTextWrapper>
-          <LocationHintText alt="Location hint text" src={locationHintText} />
+          {isEditingHint ? (
+            <LocationHintInput
+              type="text"
+              value={locationHint}
+              onChange={(e) => setLocationHint(e.target.value)}
+              onBlur={() => setIsEditingHint(false)}
+              autoFocus
+            />
+          ) : locationHint ? (
+            <LocationHintDisplay onClick={() => setIsEditingHint(true)}>
+              {locationHint}
+            </LocationHintDisplay>
+          ) : (
+            <LocationHintPlaceholder
+              alt="Location hint text"
+              src={locationHintTextImg}
+              onClick={() => setIsEditingHint(true)}
+            />
+          )}
         </LocationHintTextWrapper>
 
         <Div>
@@ -465,27 +566,19 @@ export const Component = () => {
           <CaptionInstruction alt="Caption instruction" src={captionInstruction} />
         </CaptionInstructionWrapper>
 
-        <Overlap2>
-          <PublicPublicTextWrapper>
-            <PublicPublicText alt="Public public text" src={publicPublicText} />
-          </PublicPublicTextWrapper>
-          <PublicPrivateText alt="Public private text" src={publicPrivateText} />
-        </Overlap2>
+        <VisibilityWrapper>
+          <VisibilitySelectedBox src={publicSelectedBoxImg} data-visibility={visibility} />
+          <PublicText src={publicPublicTextImg} onClick={() => setVisibility('public')} />
+          <PrivateText src={publicPrivateTextImg} onClick={() => setVisibility('private')} />
+        </VisibilityWrapper>
 
         <Overlap3>
-          <ElementTextWrapper>
-            <ElementText alt="Element text" src={mText1} />
-          </ElementTextWrapper>
-          <ElementMText alt="Element text" src={mText2} />
-          <ElementText2 alt="Element text" src={mText} />
+          <UnlockSelectedBox src={unlockSelectedBoxImg} data-radius={selectedRadius} />
+          <Radius10m src={mText1} onClick={() => setSelectedRadius(10)} />
+          <Radius50m src={mText2} onClick={() => setSelectedRadius(50)} />
+          <Radius100m src={mText} onClick={() => setSelectedRadius(100)} />
         </Overlap3>
 
-        <Overlap4>
-          <TagFriendBox alt="Tag friend box" src={tagFriendBox} />
-          <TagFriendName alt="Tag friend name" src={tagFriendName} />
-          <Rectangle2 alt="Rectangle" src={rectangle240652340} />
-          <Img2 alt="Img" src={image2} />
-        </Overlap4>
       </OverlapGroup>
     </ComponentWrapper>
   );
