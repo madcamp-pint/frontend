@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import KakaoMap from '../components/KakaoMap';
-import NewPost from '../components/NewPost';
+import { Component as NewPost } from '../components/NewPost';
 
 export default function PlacePintPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedPosition, setClickedPosition] = useState(null);
-  
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
 
     return () => {
       document.body.style.overflow = 'auto';
     };
-  } ,[]);
+  }, []);
 
   const handleMapClick = (position) => {
     setClickedPosition(position);
@@ -26,72 +27,75 @@ export default function PlacePintPage() {
   };
 
   return (
-    <div style={wrapper}>
+    <Wrapper>
       <Sidebar />
-      <div style={mapWrapper}>
-        <KakaoMap 
-          width="100vw" 
-          height="100vh" 
-          onMapClick={handleMapClick} 
+      <MapWrapper>
+        <KakaoMap
+          width="100vw"
+          height="100vh"
+          onMapClick={handleMapClick}
         />
         {isModalOpen && (
-          <div style={modalOverlayStyle}>
-            <div style={modalContentStyle}>
-              <div style={modalInnerContentStyle}>
+          <ModalOverlay>
+            <ModalContent>
+              <ModalInnerContent>
                 <NewPost onClose={closeModal} />
-              </div>
-            </div>
-          </div>
+              </ModalInnerContent>
+            </ModalContent>
+          </ModalOverlay>
         )}
-      </div>
-    </div>
+      </MapWrapper>
+    </Wrapper>
   );
 }
 
-const wrapper = {
-  display: 'flex', 
-  width: '100vw', 
-  height: '100vh', 
-  backgroundColor: '#121212'
-};
+const Wrapper = styled.div`
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #121212;
+`;
 
-const mapWrapper = {
-  flex: 1,
-  margin: '20px',
-  borderRadius: '20px',
-  overflow: 'hidden'
-};
+const MapWrapper = styled.div`
+  flex: 1;
+  margin: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+`;
 
-const modalOverlayStyle = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.38)',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  zIndex: 1000,
-};
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.38);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
 
-const modalContentStyle = {
-  width: '433px',
-  height: '668px',
-  flexShrink: 0,
-  borderRadius: '18px',
-  background: '#FFF',
-  position: 'relative',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  overflow: 'hidden',
-};
+const ModalContent = styled.div`
+  width: 433px;
+  height: 668px;
+  flex-shrink: 0;
+  border-radius: 18px;
+  background: #fff;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+`;
 
-const modalInnerContentStyle = {
-  height: '100%',
-  width: '100%',
-  overflowY: 'auto',
-  textAlign: 'center',
-  color: 'black', // 콘텐츠 색상
-};
+const ModalInnerContent = styled.div`
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  color: black;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
+`;
