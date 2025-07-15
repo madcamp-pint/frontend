@@ -120,7 +120,7 @@ const CancelButton = styled.button`
 `;
 
 const SubmitButton = styled.button`
-    background: #6DEBEE;
+    background: #7CDDDF;
     color: black;
     width: 100px;
     height: 40px;
