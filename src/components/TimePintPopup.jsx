@@ -157,15 +157,51 @@ const StyledDatePicker = styled(DatePicker)`
 `;
 
 const TimePintPopup = ({ onClose }) => {
+    const [title, setTitle] = useState('');
     const [isPublic, setIsPublic] = useState(true);
     const [openTime, setOpenTime] = useState(null);
+    const [tags, setTags] = useState('');
+    const [file, setFile] = useState(null);
+    const [content, setContent] = useState('');
+
+    const handleSubmit = async () => {
+        const formData = new FormData();
+        formData.append('name', title);
+        formData.append('openDate', openTime);
+        formData.append('isPublic', isPublic);
+        formData.append('tags', JSON.stringify(tags.split(',').map(t => t.trim())));
+        formData.append('content', content);
+        if (file) formData.append('media', file);
+
+        try {
+            const res = await fetch('http://localhost:4000/api/time-pints', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            });
+
+            if (res.ok) {
+                alert('새로운 Time PINT가 등록되었습니다.');
+                onClose();
+            } else {
+                alert('등록 실패');
+            }
+            } catch (err) {
+            console.error(err);
+            alert('오류 발생');
+        }
+    };
 
     return (
         <Overlay onClick={onClose}>
             <Wrapper onClick={(e) => e.stopPropagation()}>
                 <ContentWrapper>
                     <Label>핀트 이름</Label>
-                    <Input placeholder="핀트 이름을 입력하세요." />
+                    <Input 
+                        placeholder="핀트 이름을 입력하세요." 
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
                     
                     <Label>오픈 시간</Label>
                     <StyledDatePicker
@@ -183,22 +219,33 @@ const TimePintPopup = ({ onClose }) => {
                     </ToggleWrapper>
                     
                     <Label>친구 태그</Label>
-                    <Input placeholder="친구 검색" />
+                    <Input 
+                        placeholder="친구 검색" 
+                        value={tags}
+                        onChange={(e) => setTags(e.target.value)}
+                    />
 
                     <Label>사진 및 동영상</Label>
-                    <Input type="file" />
+                    <Input 
+                        type="file" 
+                        onChange={(e) => setFile(e.target.files[0])}
+                    />
 
                     <Label>내용</Label>
-                    <Textarea placeholder="타임 핀트에 담을 메시지를 입력하세요." />
+                    <Textarea 
+                        placeholder="타임 핀트에 담을 메시지를 입력하세요." 
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                    />
                 </ContentWrapper>
 
                 <ButtonWrapper>
                     <CancelButton onClick={onClose}>취소</CancelButton>
-                    <SubmitButton>완료</SubmitButton>
+                    <SubmitButton onClick={handleSubmit}>완료</SubmitButton>
                 </ButtonWrapper>
             </Wrapper>
         </Overlay>
     );
-}
+};
 
 export default TimePintPopup;
