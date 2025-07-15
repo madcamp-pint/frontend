@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Overlay = styled.div`
-    position: absolute;
+    position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 10;
@@ -135,8 +137,28 @@ const SubmitButton = styled.button`
     }
 `;
 
+const StyledDatePicker = styled(DatePicker)`
+    width: 500px;
+    background: #E9E9E9;
+    max-width: 480px;
+    font-size: 16px;
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+
+    &:focus {
+        outline: none;
+    }
+
+    &::placeholder {
+        color: #A1A1A1;
+    }
+`;
+
 const TimePintPopup = ({ onClose }) => {
     const [isPublic, setIsPublic] = useState(true);
+    const [openTime, setOpenTime] = useState(null);
 
     return (
         <Overlay onClick={onClose}>
@@ -146,7 +168,13 @@ const TimePintPopup = ({ onClose }) => {
                     <Input placeholder="핀트 이름을 입력하세요." />
                     
                     <Label>오픈 시간</Label>
-                    <Input placeholder="시간대를 입력하세요." />
+                    <StyledDatePicker
+                        selected={openTime}
+                        onChange={(date) => setOpenTime(date)}
+                        showTimeSelect
+                        dateFormat="yyyy년 MM월 dd일 HH시 mm분"
+                        placeholderText="시간대를 입력하세요."
+                    />
 
                     <Label>공개 여부</Label>
                     <ToggleWrapper>

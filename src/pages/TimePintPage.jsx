@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import TimePintPopup from '../components/TimePintPopup';
@@ -23,7 +23,7 @@ const Container = styled.div`
   align-items: center;
   justify-contents: center;
   background-color: #FAFAFA;
-  overflow-y: auto;
+  overflow: ${({ isPopupOpen }) => (isPopupOpen ? 'hidden' : 'auto')};
 
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -107,10 +107,23 @@ const TimePintPage = () => {
 
   const [popup, setPopup] = useState(false);
 
+  useEffect(() => {
+    if (popup) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    // cleanup (컴포넌트 언마운트 시 스크롤 복구)
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [popup]);
+
   return (
     <Wrapper>
       <Sidebar />
-      <Container>
+      <Container isPopupOpen={popup}>
         {/* title */}
         <TitleWrapper>
           <TitleIcon src={Icon} />
@@ -122,7 +135,6 @@ const TimePintPage = () => {
           {/* add card */}
           <AddCard onClick={() => setPopup(true)}>+</AddCard>
           {popup && <TimePintPopup onClose={() => setPopup(false)} />}
-
           {/* card data */}
           {[...dummyData]
             .sort((a, b) => b.id - a.id)
