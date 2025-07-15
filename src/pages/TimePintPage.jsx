@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
+import TimePintPopup from '../components/TimePintPopup';
 import Icon from '../assets/images/time_pint.png';
 
 const Wrapper = styled.div`
@@ -11,6 +12,7 @@ const Wrapper = styled.div`
 `;
 
 const Container = styled.div`
+  position: relative;
   flex: 1;
   width: 100%;
   margin: 20px 20px 20px 8px;
@@ -21,7 +23,7 @@ const Container = styled.div`
   align-items: center;
   justify-contents: center;
   background-color: #FAFAFA;
-  overflow-y: auto;
+  overflow: ${({ isPopupOpen }) => (isPopupOpen ? 'hidden' : 'auto')};
 
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -88,7 +90,7 @@ const RedText = styled.span`
 `;
 
 const TimePintPage = () => {
-  
+
   // time PINT 리스트 더미데이터
   const dummyData = [
     { id: 1, title: '몰입캠프1', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
@@ -103,23 +105,44 @@ const TimePintPage = () => {
     { id: 10, title: '몰입캠프10', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
   ];
 
+  const [popup, setPopup] = useState(false);
+
+  useEffect(() => {
+    if (popup) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    // cleanup (컴포넌트 언마운트 시 스크롤 복구)
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [popup]);
+
   return (
     <Wrapper>
       <Sidebar />
-      <Container>
+      <Container isPopupOpen={popup}>
         {/* title */}
         <TitleWrapper>
           <TitleIcon src={Icon} />
           <TitleText>time PINT</TitleText>
         </TitleWrapper>
-        {/* card */}
+
+        {/* card list */}
         <ListWrapper>
-          <AddCard>+</AddCard>
-          {dummyData.reverse().map((item) => (
-            <Card key={item.id}>
-              <BlackText>{item.title}</BlackText>
-              <RedText>{item.timeLeft}</RedText>
-            </Card>
+          {/* add card */}
+          <AddCard onClick={() => setPopup(true)}>+</AddCard>
+          {popup && <TimePintPopup onClose={() => setPopup(false)} />}
+          {/* card data */}
+          {[...dummyData]
+            .sort((a, b) => b.id - a.id)
+            .map((item) => (
+              <Card key={item.id}>
+                <BlackText>{item.title}</BlackText>
+                <RedText>{item.timeLeft}</RedText>
+              </Card>
           ))}
         </ListWrapper>
       </Container>

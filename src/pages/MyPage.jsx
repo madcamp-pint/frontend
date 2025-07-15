@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 
@@ -25,7 +25,14 @@ const MyPage = () => {
     <Wrapper>
       <Sidebar />
       <Container>
-        <p>MyPage</p>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh' 
+        }}>
+          <h1>MyPage</h1>
+        </div>
       </Container>
     </Wrapper>
   );
