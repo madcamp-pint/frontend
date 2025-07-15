@@ -333,7 +333,7 @@ const MainPage = () => {
               <TitleText>place PINT</TitleText>
             </TitleWrapper>
             
-            {/* <KaKaoMap /> */}
+            {/* KakaoMap */}
             <MapWrapper>
               <KakaoMap width="100%" height="320px" />
               <ExpandButton
