@@ -127,7 +127,7 @@ const TimePintPage = () => {
         {/* title */}
         <TitleWrapper>
           <TitleIcon src={Icon} />
-          <TitleText>time PINT</TitleText>
+          <TitleText>Time PINT</TitleText>
         </TitleWrapper>
 
         {/* card list */}
