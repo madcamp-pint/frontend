@@ -24,7 +24,7 @@ const Wrapper = styled.div`
 
 const Profile = styled.h1`
   position: absolute;
-  top: 40px;
+  top: 35px;
   left: 160px;
   z-index: 1px;
   color: #000;
@@ -45,7 +45,7 @@ const Profile = styled.h1`
 
 const ProfileBox = styled.div`
   position: relative;
-  top: 60px;
+  top: 55px;
   left: 82px;
   z-index: 1px;
   width: 1114px;
@@ -262,7 +262,7 @@ const EmailTextBox = styled.div`
   top: 65px;
   left: 800px;
   display: flex;
-  width: 279px;
+  width: 257px;
   height: 51px;
   flex-direction: column;
   justify-content: center;
@@ -347,11 +347,11 @@ const SaveText = styled.h2`
 
 const FriendsBox = styled.div`
   position: absolute;
-  top: 506px;
-  left: 82px;
+  top: 450px;
+  left: 208px;
   z-index: 1px;
   width: 1114px;
-  height: 383px;
+  height: 320px;
   flex-shrink: 0;
   border-radius: 64px;
   background: #E1E9F0;
@@ -359,8 +359,8 @@ const FriendsBox = styled.div`
 
 const ProfileTitle = styled.h2`
   position: absolute;
-  top: 60px;
-  left: 39px;
+  top: -80px;
+  left: -60px;
   display: flex;
   width: 177px;
   height: 57px;
@@ -372,7 +372,7 @@ const ProfileTitle = styled.h2`
   font-family: "Noto Sans";
   font-size: 30px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: 500;
   line-height: normal;
 `;
 
@@ -435,6 +435,35 @@ const MyPage = () => {
     }
   };
 
+  const handleSave = async () => {
+    const data = {
+      introduction,
+      userName,
+      link,
+      email,
+    };
+
+    try {
+      const response = await fetch('http://localhost:4000/auth/update-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('저장되었습니다!');
+      } else {
+        alert(result.message || '저장 실패');
+      }
+    } catch (err) {
+      alert('서버 오류');
+    }
+  };
+
   return (
     <Wrapper>
       <Sidebar />
@@ -489,11 +518,15 @@ const MyPage = () => {
             onChange={handleEmailChange}
           />
         </EmailTextBox>
-        <SaveButton>
+        <SaveButton onClick={handleSave}>
           <SaveText>저장</SaveText>
         </SaveButton>
       </ProfileBox>
       <Profile>프로필</Profile>
+
+      <FriendsBox>
+        <ProfileTitle>친구</ProfileTitle>
+      </FriendsBox>
       </Container>
     </Wrapper>
   );

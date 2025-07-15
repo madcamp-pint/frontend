@@ -64,6 +64,17 @@ export default function PlacePintPage() {
   const [clickedPosition, setClickedPosition] = useState(null);
   const [address, setAddress] = useState(""); // New state for address
   const [user, setUser] = useState(null); // 사용자 정보 상태 추가
+  const [myPints, setMyPints] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:4000/pints/my', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => {
+        setMyPints(data);
+        console.log('내 핀트:', data);
+      })
+      .catch(err => console.error('내 핀트 가져오기 실패:', err));
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -124,6 +135,7 @@ export default function PlacePintPage() {
             height="100vh"
             onMapClick={handleMapClick}
             mapMode="write"
+            myPints={myPints}
           />
         )}
         {mapMode === 'my' && (

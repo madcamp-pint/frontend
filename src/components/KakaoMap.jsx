@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const KakaoMap = ({ width, height, onMapClick }) => {
+const KakaoMap = ({ width, height, onMapClick, myPints }) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const onMapClickRef = useRef(onMapClick); // Ref to store the latest onMapClick prop
@@ -9,6 +9,25 @@ const KakaoMap = ({ width, height, onMapClick }) => {
     useEffect(() => {
         onMapClickRef.current = onMapClick;
     }, [onMapClick]);
+
+    useEffect(() => {
+        if (!window.kakao || !window.kakao.maps || !map.current) return;
+        // 기존 마커 지우기 (마커 배열을 상태로 관리하면 더 좋음)
+        if (map.current.markers) {
+            map.current.markers.forEach(marker => marker.setMap(null));
+        }
+        map.current.markers = [];
+        myPints.forEach(pint => {
+            const marker = new window.kakao.maps.Marker({
+                map: map.current,
+                position: new window.kakao.maps.LatLng(
+                    pint.location.coordinates[1], 
+                    pint.location.coordinates[0]
+                ),
+            });
+            map.current.markers.push(marker);
+        });
+    }, [myPints]);
 
     useEffect(() => {
         const script = document.createElement('script');

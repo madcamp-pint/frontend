@@ -682,7 +682,7 @@ export const Component = ({ onClose, address, user, position }) => {
       formData.append('longitude', position.lng);
     }
     if (user) {
-      formData.append('userId', user.id || user.kakaoId || '');
+      formData.append('creator', user.kakaoId);
       formData.append('nickname', user.nickname || user.displayName || '');
       formData.append('profileImage', user.profileImage || user._json?.properties?.profile_image || '');
       formData.append('thumbnailImage', user.thumbnailImage || user._json?.properties?.thumbnail_image || '');
