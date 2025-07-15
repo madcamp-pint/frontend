@@ -3,6 +3,61 @@ import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import KakaoMap from '../components/KakaoMap';
 import { Component as NewPost } from '../components/NewPost';
+import SelectedButton from '../assets/images/selected_button.png';
+
+  const BottomButtonRow = styled.div`
+  position: fixed;
+  right: 41px;
+  bottom: 58px;
+  width: 83px;
+  height: 251px;
+  flex-shrink: 0;
+  border-radius: 100px;
+  background: #FFF;
+  box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.25);
+  gap: 30px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  z-index: 1000;
+  `;
+
+  const Button = styled.button`
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  font-size: 40px;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  ${({ selected }) => 
+    selected && 
+    `
+      &::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background: url(${SelectedButton}) no-repeat center center;
+      border-radius: 50%;
+      z-index: 0;
+     }
+    `
+  }
+  span {
+    position: relative;
+    z-index: 1;
+  }
+`;
 
 export default function PlacePintPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,9 +77,10 @@ export default function PlacePintPage() {
       document.body.style.overflow = 'auto';
     };
   }, []);
-
+  const [mapMode, setMapMode] = useState('write');
+  
   const handleMapClick = useCallback((position) => {
-    console.log("Clicked position:", position);
+    // console.log("Clicked position:", position);
     setClickedPosition(position);
     setIsModalOpen(true);
 
@@ -62,20 +118,47 @@ export default function PlacePintPage() {
     <Wrapper>
       <Sidebar />
       <MapWrapper>
-        <KakaoMap
-          width="100vw"
-          height="100vh"
-          onMapClick={handleMapClick}
-        />
+        {mapMode === 'write' && (
+          <KakaoMap
+            width="100vw"
+            height="100vh"
+            onMapClick={handleMapClick}
+            mapMode="write"
+          />
+        )}
+        {mapMode === 'my' && (
+          <KakaoMap
+            width="100vw"
+            height="100vh"
+            onMapClick={undefined} // 클릭 비활성화
+            mapMode="my"
+          />
+        )}
+        {mapMode === 'public' && (
+          <KakaoMap
+            width="100vw"
+            height="100vh"
+            onMapClick={undefined} // 클릭 비활성화
+            mapMode="public"
+          />
+        )}
         {isModalOpen && (
           <ModalOverlay>
             <ModalContent>
               <ModalInnerContent>
-                <NewPost onClose={closeModal} address={address} user={user} position={clickedPosition} /> {/* user prop 전달 */}
+                <NewPost onClose={closeModal} address={address} user={user} position={clickedPosition} />
               </ModalInnerContent>
             </ModalContent>
           </ModalOverlay>
         )}
+        <BottomButtonRow>
+          <Button selected={mapMode === 'write'} onClick={() => setMapMode('write')}>
+            <span>📍</span></Button>
+          <Button selected={mapMode === 'my'} onClick={() => setMapMode('my')}>
+            <span>🔒</span></Button>
+          <Button selected={mapMode === 'public'} onClick={() => setMapMode('public')}>
+            <span>🌎</span></Button>
+        </BottomButtonRow>
       </MapWrapper>
     </Wrapper>
   );
