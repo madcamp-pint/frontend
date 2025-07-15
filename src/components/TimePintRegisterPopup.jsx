@@ -241,7 +241,7 @@ const TimePintPopup = ({ onClose }) => {
 
                 <ButtonWrapper>
                     <CancelButton onClick={onClose}>취소</CancelButton>
-                    <SubmitButton onClick={handleSubmit}>완료</SubmitButton>
+                    <SubmitButton onClick={handleSubmit}>등록</SubmitButton>
                 </ButtonWrapper>
             </Wrapper>
         </Overlay>
