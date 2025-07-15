@@ -126,7 +126,6 @@ const DropdownMenu = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   z-index: 11;
 `;
 
@@ -139,6 +138,14 @@ const DropdownItem = styled.div`
   cursor: pointer;
   background-color: #E5E5E5;
   transition: filter 0.2s ease-in-out;
+  &:first-child {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+  &:last-child {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
 
   &:hover {
     filter: brightness(0.9);
@@ -267,6 +274,7 @@ const MainPage = () => {
   const [user, setUser] = useState(null);
   const [isDropdown, setIsDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const [isFriendModalOpen, setFriendModalOpen] = useState(false);
 
   // 유저 정보 가져오기
   useEffect(() => {
@@ -377,6 +385,7 @@ const MainPage = () => {
           </TimePintWrapper>
         </ContentWrapper>
       </Container>
+      {/* <FriendModal open={isFriendModalOpen} onClose={() => setFriendModalOpen(false)} /> */}
     </Wrapper>
   )
 }
