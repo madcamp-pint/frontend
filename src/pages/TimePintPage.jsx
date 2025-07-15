@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
-import TimePintPopup from '../components/TimePintPopup';
+import TimePintRegisterPopup from '../components/TimePintRegisterPopup';
+import TimePintViewPopup from '../components/TimePintViewPopup';
 import Icon from '../assets/images/time_pint.png';
 
 const Wrapper = styled.div`
@@ -66,6 +67,12 @@ const Card = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 20px;
+  cursor: pointer;
+  transition: filter 0.2s ease-in-out;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
 `;
 
 const AddCard = styled(Card)`
@@ -105,25 +112,22 @@ const TimePintPage = () => {
     { id: 10, title: '몰입캠프10', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
   ];
 
-  const [popup, setPopup] = useState(false);
+  const [registerPint, setRegisterPint] = useState(false);
+  const [viewPint, setViewPint] = useState(null);
+
+  const isPopupOpen = registerPint || viewPint;
 
   useEffect(() => {
-    if (popup) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-
-    // cleanup (컴포넌트 언마운트 시 스크롤 복구)
+    document.body.style.overflow = isPopupOpen ? 'hidden' : 'auto';
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [popup]);
+  }, [isPopupOpen]);
 
   return (
     <Wrapper>
       <Sidebar />
-      <Container isPopupOpen={popup}>
+      <Container isPopupOpen={isPopupOpen}>
         {/* title */}
         <TitleWrapper>
           <TitleIcon src={Icon} />
@@ -133,13 +137,23 @@ const TimePintPage = () => {
         {/* card list */}
         <ListWrapper>
           {/* add card */}
-          <AddCard onClick={() => setPopup(true)}>+</AddCard>
-          {popup && <TimePintPopup onClose={() => setPopup(false)} />}
+          <AddCard onClick={() => setRegisterPint(true)}>+</AddCard>
+
+          {/* register Time PINT */}
+          {registerPint && (
+            <TimePintRegisterPopup onClose={() => setRegisterPint(false)} />
+          )}
+
+          {/* view Time PINT */}
+          {viewPint && (
+            <TimePintViewPopup pint={viewPint} onClose={() => setViewPint(null)} />
+          )}
+
           {/* card data */}
           {[...dummyData]
             .sort((a, b) => b.id - a.id)
             .map((item) => (
-              <Card key={item.id}>
+              <Card key={item.id} onClick={() => setViewPint(item)}>
                 <BlackText>{item.title}</BlackText>
                 <RedText>{item.timeLeft}</RedText>
               </Card>
