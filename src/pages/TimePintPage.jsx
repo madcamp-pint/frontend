@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
+import TimePintPopup from '../components/TimePintPopup';
 import Icon from '../assets/images/time_pint.png';
 
 const Wrapper = styled.div`
@@ -11,6 +12,7 @@ const Wrapper = styled.div`
 `;
 
 const Container = styled.div`
+  position: relative;
   flex: 1;
   width: 100%;
   margin: 20px 20px 20px 8px;
@@ -88,7 +90,7 @@ const RedText = styled.span`
 `;
 
 const TimePintPage = () => {
-  
+
   // time PINT 리스트 더미데이터
   const dummyData = [
     { id: 1, title: '몰입캠프1', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
@@ -103,6 +105,8 @@ const TimePintPage = () => {
     { id: 10, title: '몰입캠프10', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
   ];
 
+  const [popup, setPopup] = useState(false);
+
   return (
     <Wrapper>
       <Sidebar />
@@ -112,14 +116,21 @@ const TimePintPage = () => {
           <TitleIcon src={Icon} />
           <TitleText>time PINT</TitleText>
         </TitleWrapper>
-        {/* card */}
+
+        {/* card list */}
         <ListWrapper>
-          <AddCard>+</AddCard>
-          {dummyData.reverse().map((item) => (
-            <Card key={item.id}>
-              <BlackText>{item.title}</BlackText>
-              <RedText>{item.timeLeft}</RedText>
-            </Card>
+          {/* add card */}
+          <AddCard onClick={() => setPopup(true)}>+</AddCard>
+          {popup && <TimePintPopup onClose={() => setPopup(false)} />}
+
+          {/* card data */}
+          {[...dummyData]
+            .sort((a, b) => b.id - a.id)
+            .map((item) => (
+              <Card key={item.id}>
+                <BlackText>{item.title}</BlackText>
+                <RedText>{item.timeLeft}</RedText>
+              </Card>
           ))}
         </ListWrapper>
       </Container>

@@ -338,7 +338,7 @@ const MainPage = () => {
           <PlacePintWrapper>
             <TitleWrapper onClick={() => navigate('/place')}>
               <Icon src={placePintIcon} alt='place_pint_icon' />
-              <TitleText>place PINT</TitleText>
+              <TitleText>Place PINT</TitleText>
             </TitleWrapper>
             
             {/* KakaoMap */}
@@ -356,7 +356,7 @@ const MainPage = () => {
           <TimePintWrapper>
             <TitleWrapper onClick={() => navigate('/time')}>
               <Icon src={timePintIcon} alt='time_pint_icon' />
-              <TitleText>time PINT</TitleText>
+              <TitleText>Time PINT</TitleText>
             </TitleWrapper>
 
             <ListWrapper>
