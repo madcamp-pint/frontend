@@ -842,11 +842,7 @@ export const Component = ({ onClose, user, position, pint, readOnly, onSaved }) 
                     : file.name;
                   return (
                     <UploadFileNameBox key={index}>
-                      <img
-                        src={typeof file === "string" ? file : URL.createObjectURL(file)}
-                        alt={fileName}
-                        style={{ maxWidth: 80, maxHeight: 80, marginRight: 8 }}
-                      />
+                      <DeleteButton style = {{ visibility: "hidden "}}>x</DeleteButton>
                       <UploadedFileNameText>{fileName}</UploadedFileNameText>
                     </UploadFileNameBox>
                   );
