@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 
 import mText1 from "../assets/images/NewPost_png/10m_text.png";
@@ -652,7 +652,7 @@ const CancelButtonText = styled.span`
 `;
 
 // Component
-export const Component = ({ onClose, address, user, position }) => {
+export const Component = ({ onClose, user, position, pint, readOnly, onSaved }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [pintName, setPintName] = useState("");
   const [selectedRadius, setSelectedRadius] = useState(10);
@@ -663,6 +663,20 @@ export const Component = ({ onClose, address, user, position }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [caption, setCaption] = useState("");
   const [isEditingCaption, setIsEditingCaption] = useState(false);
+  const [address, setAddress] = useState("");
+
+  useEffect(() => {
+    if (pint && readOnly) {
+      setPintName(pint.pintName || pint.title);
+      setSelectedRadius(pint.radius);
+      setLocationHint(pint.location?.hint || pint.locationHint);
+      setVisibility(pint.visibility);
+      setCaption(pint.caption);
+      setAddress(pint.location?.address || "");
+      // ⭐ 여러 파일(images 배열) 세팅
+      setSelectedFiles(Array.isArray(pint.images) ? pint.images : []);
+    }
+  }, [pint, readOnly]);
 
   // 저장 핸들러
   const handleSave = async () => {
@@ -700,6 +714,7 @@ export const Component = ({ onClose, address, user, position }) => {
       });
       if (!response.ok) throw new Error('저장 실패');
       // 입력값 초기화 및 모달 닫기
+      if (onSaved) setTimeout(onSaved, 200);
       console.log('핀트 저장 성공!');
       setPintName("");
       setSelectedRadius(10);
@@ -812,32 +827,68 @@ export const Component = ({ onClose, address, user, position }) => {
           )}
         </LocationHintTextWrapper>
 
-        <Div onClick={() => fileInputRef.current.click()}>
-          <UploadBox alt="Upload box" src={uploadBox} />
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            style={{ display: 'none' }}
-            accept="image/*,video/*"
-            multiple
-          />
-          <UploadMax alt="Upload max" src={uploadMax} />
-          <UploadPlusIcon alt="Upload plus icon" src={uploadPlusIcon} />
-          {selectedFiles.length > 0 && (
-            <UploadedFilesContainer>
-              {selectedFiles.map((file, index) => (
-                <UploadFileNameBox key={index}>
-                  <DeleteButton onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering file input click
-                    handleRemoveFile(index);
-                  }}>x</DeleteButton>
-                  <UploadedFileNameText>{file.name}</UploadedFileNameText>
-                </UploadFileNameBox>
-              ))}
-            </UploadedFilesContainer>
-          )}
-        </Div>
+        {/* 사진 및 동영상 영역 */}
+        {readOnly ? (
+          // ⭐ 읽기 모드: 파일명과 미리보기만 보여줌
+          <Div>
+            <UploadBox alt="Upload box" src={uploadBox} />
+            <UploadMax alt="Upload max" src={uploadMax} />
+            <UploadPlusIcon alt="Upload plus icon" src={uploadPlusIcon} />
+            {selectedFiles.length > 0 && (
+              <UploadedFilesContainer>
+                {selectedFiles.map((file, index) => {
+                  const fileName = typeof file === "string"
+                    ? file.split('/').pop()
+                    : file.name;
+                  return (
+                    <UploadFileNameBox key={index}>
+                      <img
+                        src={typeof file === "string" ? file : URL.createObjectURL(file)}
+                        alt={fileName}
+                        style={{ maxWidth: 80, maxHeight: 80, marginRight: 8 }}
+                      />
+                      <UploadedFileNameText>{fileName}</UploadedFileNameText>
+                    </UploadFileNameBox>
+                  );
+                })}
+              </UploadedFilesContainer>
+            )}
+          </Div>
+        ) : (
+          // ⭐ 입력 모드: 파일 업로드 input 포함
+          <Div onClick={() => fileInputRef.current.click()}>
+            <UploadBox alt="Upload box" src={uploadBox} />
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              accept="image/*,video/*"
+              multiple
+            />
+            <UploadMax alt="Upload max" src={uploadMax} />
+            <UploadPlusIcon alt="Upload plus icon" src={uploadPlusIcon} />
+            {selectedFiles.length > 0 && (
+              <UploadedFilesContainer>
+                {selectedFiles.map((file, index) => {
+                  const fileName = typeof file === "string"
+                    ? file.split('/').pop()
+                    : file.name;
+                  return (
+                    <UploadFileNameBox key={index}>
+                      <img
+                        src={typeof file === "string" ? file : URL.createObjectURL(file)}
+                        alt={fileName}
+                        style={{ maxWidth: 80, maxHeight: 80, marginRight: 8 }}
+                      />
+                      <UploadedFileNameText>{fileName}</UploadedFileNameText>
+                    </UploadFileNameBox>
+                  );
+                })}
+              </UploadedFilesContainer>
+            )}
+          </Div>
+        )}
 
         <CaptionInstructionWrapper>
           {isEditingCaption ? (

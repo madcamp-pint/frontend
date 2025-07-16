@@ -1,18 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 
-const KakaoMap = ({ width, height, onMapClick, myPints }) => {
+const KakaoMap = ({ width, height, onMapClick, myPints, onMarkerClick }) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const onMapClickRef = useRef(onMapClick); // Ref to store the latest onMapClick prop
-
-    // Update the ref whenever onMapClick prop changes
-    useEffect(() => {
-        onMapClickRef.current = onMapClick;
-    }, [onMapClick]);
-
-    useEffect(() => {
+    function drawMarkers() {
         if (!window.kakao || !window.kakao.maps || !map.current) return;
-        // 기존 마커 지우기 (마커 배열을 상태로 관리하면 더 좋음)
         if (map.current.markers) {
             map.current.markers.forEach(marker => marker.setMap(null));
         }
@@ -25,8 +18,20 @@ const KakaoMap = ({ width, height, onMapClick, myPints }) => {
                     pint.location.coordinates[0]
                 ),
             });
+            // ⭐ 마커 클릭 이벤트 등록
+            window.kakao.maps.event.addListener(marker, 'click', () => {
+                if (onMarkerClick) onMarkerClick(pint);
+            });
             map.current.markers.push(marker);
         });
+    }
+    // Update the ref whenever onMapClick prop changes
+    useEffect(() => {
+        onMapClickRef.current = onMapClick;
+    }, [onMapClick]);
+
+    useEffect(() => {
+        drawMarkers();
     }, [myPints]);
 
     useEffect(() => {
@@ -54,7 +59,7 @@ const KakaoMap = ({ width, height, onMapClick, myPints }) => {
                         level: 3,
                     };
                     map.current = new window.kakao.maps.Map(container, options);
-
+                    drawMarkers();
                     // 지도 클릭 이벤트 리스너 추가
                     window.kakao.maps.event.addListener(map.current, 'click', function(mouseEvent) {
                         const latLng = mouseEvent.latLng;

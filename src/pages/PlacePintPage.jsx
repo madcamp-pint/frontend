@@ -5,6 +5,60 @@ import KakaoMap from '../components/KakaoMap';
 import { Component as NewPost } from '../components/NewPost';
 import SelectedButton from '../assets/images/selected_button.png';
 
+
+  const Wrapper = styled.div`
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #121212;
+  `;
+
+  const MapWrapper = styled.div`
+  flex: 1;
+  margin: 20px 20px 20px 8px;
+  border-radius: 20px;
+  overflow: hidden;
+  `;
+
+  const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.38);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  `;
+
+  const ModalContent = styled.div`
+  width: 433px;
+  height: 668px;
+  flex-shrink: 0;
+  border-radius: 18px;
+  background: #fff;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  `;
+
+  const ModalInnerContent = styled.div`
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  color: black;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
+  padding: 0 0 10px 0;
+  `;
+
+
   const BottomButtonRow = styled.div`
   position: fixed;
   right: 41px;
@@ -65,30 +119,13 @@ export default function PlacePintPage() {
   const [address, setAddress] = useState(""); // New state for address
   const [user, setUser] = useState(null); // 사용자 정보 상태 추가
   const [myPints, setMyPints] = useState([]);
-
-  useEffect(() => {
-    fetch('http://localhost:4000/pints/my', { credentials: 'include' })
-      .then(res => res.json())
-      .then(data => {
-        setMyPints(data);
-        console.log('내 핀트:', data);
-      })
-      .catch(err => console.error('내 핀트 가져오기 실패:', err));
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    // 사용자 정보 fetch
-    fetch('http://localhost:4000/auth/user', { credentials: 'include' })
-      .then(res => res.json())
-      .then(data => setUser(data))
-      .catch(err => console.error('유저 정보 가져오기 실패:', err));
-
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
   const [mapMode, setMapMode] = useState('write');
+  const [selectedPint, setSelectedPint] = useState(null);
+
+  const handleMarkerClick = useCallback((pint) => {
+    setSelectedPint(pint);
+    setIsModalOpen(true);
+  }, []);
   
   const handleMapClick = useCallback((position) => {
     // console.log("Clicked position:", position);
@@ -125,6 +162,41 @@ export default function PlacePintPage() {
     setAddress(""); // Clear address when modal closes
   };
 
+  const fetchMyPints = useCallback(() => {
+    fetch('http://localhost:4000/pints/my', { credentials: 'include' })
+    .then(res => res.json())
+    .then(data => setMyPints(data))
+    .catch(err => console.error('내 핀트 가져오기 실패:', err));
+  }, []);
+
+  useEffect(() => {
+    fetch('http://localhost:4000/pints/my', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => {
+        setMyPints(data);
+        console.log('내 핀트:', data); // 여기서 address 필드가 있는지 확인!
+      })
+      .catch(err => console.error('내 핀트 가져오기 실패:', err));
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    // 사용자 정보 fetch
+    fetch('http://localhost:4000/auth/user', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => setUser(data))
+      .catch(err => console.error('유저 정보 가져오기 실패:', err));
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
+
+  // useEffect(() => {
+  //   fetchMyPints();
+  // }, [fetchMyPints]);
+
   return (
     <Wrapper>
       <Sidebar />
@@ -133,9 +205,10 @@ export default function PlacePintPage() {
           <KakaoMap
             width="100vw"
             height="100vh"
-            onMapClick={handleMapClick}
-            mapMode="write"
+            onMapClick={mapMode === 'write' ? handleMapClick : undefined}
+            mapMode={mapMode}
             myPints={myPints}
+            onMarkerClick={handleMarkerClick}
           />
         )}
         {mapMode === 'my' && (
@@ -158,7 +231,21 @@ export default function PlacePintPage() {
           <ModalOverlay>
             <ModalContent>
               <ModalInnerContent>
-                <NewPost onClose={closeModal} address={address} user={user} position={clickedPosition} />
+                <NewPost
+                  onClose={() => {
+                    setIsModalOpen(false);
+                    setSelectedPint(null);
+                  }}
+                  address={selectedPint ? selectedPint.address : address}
+                  user={user}
+                  position={selectedPint ? {
+                    lat: selectedPint.location.coordinates[1],
+                    lng: selectedPint.location.coordinates[0]
+                  } : clickedPosition}
+                  pint={selectedPint}
+                  readOnly={!!selectedPint}
+                  onSaved={fetchMyPints}
+                />
               </ModalInnerContent>
             </ModalContent>
           </ModalOverlay>
@@ -175,55 +262,3 @@ export default function PlacePintPage() {
     </Wrapper>
   );
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  background-color: #121212;
-`;
-
-const MapWrapper = styled.div`
-  flex: 1;
-  margin: 20px 20px 20px 8px;
-  border-radius: 20px;
-  overflow: hidden;
-`;
-
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.38);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-`;
-
-const ModalContent = styled.div`
-  width: 433px;
-  height: 668px;
-  flex-shrink: 0;
-  border-radius: 18px;
-  background: #fff;
-  position: relative;
-  display: flex;
-  overflow: hidden;
-`;
-
-const ModalInnerContent = styled.div`
-  height: 100%;
-  width: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  color: black;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-  &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera*/
-  }
-  padding: 0 0 10px 0;
-`;
