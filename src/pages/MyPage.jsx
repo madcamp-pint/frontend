@@ -89,6 +89,8 @@ const SaveButton = styled.button`
 `;
 
 const FriendsBox = styled.div`
+  position: relative;
+  height: 220px;
   background: #e1e9f0;
   border-radius: 20px;
   padding: 32px;
@@ -121,6 +123,41 @@ const FriendInputWrapper = styled(InputWrapper)`
   flex: 1;
 `;
 
+const FriendListContainer = styled.div`
+  position: absolute;
+  top: 170px;
+  left: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px 40px;
+  width: 1000px;
+`;
+
+const FriendItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+`;
+
+const FriendProfileImg = styled.img`
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ABD8FF;
+  margin-bottom: 8px;
+`;
+
+const FriendName = styled.div`
+  font-size: 16px;
+  color: #222;
+  font-family: "Noto Sans";
+  text-align: center;
+  font-weight: 500;
+  word-break: break-all;
+`;
+
 const MyPage = () => {
   const [user, setUser] = useState(null);
   const [introduction, setIntroduction] = useState('');
@@ -128,6 +165,7 @@ const MyPage = () => {
   const [link, setLink] = useState('');
   const [email, setEmail] = useState('');
   const [friendAdd, setFriendAdd] = useState('');
+  const [friendList, setFriendList] = useState([]);
 
   useEffect(() => {
     fetch('http://localhost:4000/auth/user', {
@@ -142,6 +180,13 @@ const MyPage = () => {
         setEmail(data?.email || '');
       })
       .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    fetch('http://localhost:4000/auth/list', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => setFriendList(data))
+      .catch(err => console.error('친구 목록 불러오기 실패:', err));
   }, []);
 
   const handleSave = async () => {
@@ -256,7 +301,18 @@ const MyPage = () => {
               </SaveButton>
             </FriendInputRow>
             <Label style={{ marginTop: '20px' }}>친구 목록</Label>
-            {/* 친구 목록 컴포넌트 자리 */}
+            <FriendListContainer>
+              {friendList.length === 0 ? (
+                <div style={{ color: '#888', fontSize: '15px' }}>친구가 없습니다.</div>
+              ) : (
+                friendList.map(friend => (
+                  <FriendItem key={friend._id}>
+                    <FriendProfileImg src={friend.profileImage || '/default_profile.png'} alt="profile" />
+                    <FriendName>{friend.nickname || friend.userName || '이름없음'}</FriendName>
+                  </FriendItem>
+                ))
+              )}
+            </FriendListContainer>
           </FriendsBox>
         </ContentSection>
       </Container>
@@ -265,3 +321,4 @@ const MyPage = () => {
 };
 
 export default MyPage;
+

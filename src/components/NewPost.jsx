@@ -651,6 +651,8 @@ const CancelButtonText = styled.span`
   line-height: normal;
 `;
 
+// styled-components 예시
+
 // Component
 export const Component = ({ onClose, user, position, pint, readOnly, onSaved, address }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -663,7 +665,41 @@ export const Component = ({ onClose, user, position, pint, readOnly, onSaved, ad
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [caption, setCaption] = useState("");
   const [isEditingCaption, setIsEditingCaption] = useState(false);
-  // address state, setAddress, address 관련 useEffect 모두 삭제
+  const [isTagInputActive, setIsTagInputActive] = useState(false);
+  const [tagInput, setTagInput] = useState('');
+  const [taggedFriend, setTaggedFriend] = useState(null);
+  const [tagError, setTagError] = useState('');
+  const [myFriends, setMyFriends] = useState([]);
+
+  // 1. 내 친구 목록 불러오기
+  useEffect(() => {
+    fetch('http://localhost:4000/auth/list', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => setMyFriends(data))
+      .catch(err => console.error('친구 목록 불러오기 실패:', err));
+  }, []);
+
+  // 2. 친구 태그 input 클릭/입력 처리
+  const handleTagInputClick = () => {
+    setIsTagInputActive(true);
+    setTagError('');
+  };
+
+  const handleTagInputChange = (e) => {
+    const value = e.target.value;
+    setTagInput(value);
+
+    // 친구 목록에서 userName이 일치하는 친구 찾기
+    const friend = myFriends.find(f => f.userName === value);
+    if (friend) {
+      setTaggedFriend(friend);
+      setTagError('');
+    } else {
+      setTaggedFriend(null);
+      if (value) setTagError('친구가 아닙니다');
+      else setTagError('');
+    }
+  };
 
   useEffect(() => {
     if (pint && readOnly) {
@@ -710,6 +746,9 @@ export const Component = ({ onClose, user, position, pint, readOnly, onSaved, ad
     selectedFiles.forEach((file) => {
       formData.append('files', file);
     });
+    if (taggedFriend) {
+      formData.append('taggedFriends', taggedFriend._id);
+    }
     try {
       const response = await fetch('http://localhost:4000/api/pints', {
         method: 'POST',
