@@ -228,6 +228,8 @@ export default function PlacePintPage() {
             height="100vh"
             onMapClick={undefined} // 클릭 비활성화
             mapMode="my"
+            myPints={myPints.filter(pint => pint.visibility === 'private')}
+            onMarkerClick={handleMarkerClick}
           />
         )}
         {mapMode === 'public' && (
@@ -236,6 +238,8 @@ export default function PlacePintPage() {
             height="100vh"
             onMapClick={undefined} // 클릭 비활성화
             mapMode="public"
+            myPints={myPints.filter(pint => pint.visibility === 'public')}
+            onMarkerClick={handleMarkerClick}
           />
         )}
         {isModalOpen && (

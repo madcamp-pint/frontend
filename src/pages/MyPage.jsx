@@ -549,7 +549,7 @@ const MyPage = () => {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body:JSON.stringfy({ friendID: friendAdd}),
+        body: JSON.stringify({ friendID: friendAdd }),
       });
       if (!response.ok) throw new Error('친구 추가 실패');
       setFriendAdd('');
