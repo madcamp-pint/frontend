@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import KakaoMap from '../components/KakaoMap';
 import { Component as NewPost } from '../components/NewPost';
+<<<<<<< Updated upstream
 import SelectedButton from '../assets/images/selected_button.png';
 
 
@@ -58,6 +59,9 @@ import SelectedButton from '../assets/images/selected_button.png';
   padding: 0 0 10px 0;
   `;
 
+=======
+import SelectedButton from '../components/selected_button.png';
+>>>>>>> Stashed changes
 
   const BottomButtonRow = styled.div`
   position: fixed;
@@ -76,7 +80,10 @@ import SelectedButton from '../assets/images/selected_button.png';
   justify-content: space-between;
   align-items: center;
   padding: 20px 0;
+<<<<<<< Updated upstream
   z-index: 1000;
+=======
+>>>>>>> Stashed changes
   `;
 
   const Button = styled.button`
@@ -99,6 +106,7 @@ import SelectedButton from '../assets/images/selected_button.png';
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
+<<<<<<< Updated upstream
       width: 60px;
       height: 60px;
       background: url(${SelectedButton}) no-repeat center center;
@@ -112,6 +120,21 @@ import SelectedButton from '../assets/images/selected_button.png';
     z-index: 1;
   }
 `;
+=======
+      width: 50px;
+      height: 50px;
+      background: url(${SelectedButton}) no-repeat center center;
+      border-radius: 50%;
+      }
+    `;
+  }
+  `;
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+  ;
+>>>>>>> Stashed changes
 
 export default function PlacePintPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -126,6 +149,10 @@ export default function PlacePintPage() {
     setSelectedPint(pint);
     setIsModalOpen(true);
   }, []);
+<<<<<<< Updated upstream
+=======
+  const [mapMode, setMapMode] = useState('write');
+>>>>>>> Stashed changes
   
   const handleMapClick = useCallback((position) => {
     // console.log("Clicked position:", position);
@@ -205,10 +232,15 @@ export default function PlacePintPage() {
           <KakaoMap
             width="100vw"
             height="100vh"
+<<<<<<< Updated upstream
             onMapClick={mapMode === 'write' ? handleMapClick : undefined}
             mapMode={mapMode}
             myPints={myPints}
             onMarkerClick={handleMarkerClick}
+=======
+            onMapClick={handleMapClick}
+            mapMode="write"
+>>>>>>> Stashed changes
           />
         )}
         {mapMode === 'my' && (
@@ -231,6 +263,7 @@ export default function PlacePintPage() {
           <ModalOverlay>
             <ModalContent>
               <ModalInnerContent>
+<<<<<<< Updated upstream
                 <NewPost
                   onClose={() => {
                     setIsModalOpen(false);
@@ -246,17 +279,26 @@ export default function PlacePintPage() {
                   readOnly={!!selectedPint}
                   onSaved={fetchMyPints}
                 />
+=======
+                <NewPost onClose={closeModal} address={address} user={user} position={clickedPosition} />
+>>>>>>> Stashed changes
               </ModalInnerContent>
             </ModalContent>
           </ModalOverlay>
         )}
         <BottomButtonRow>
+<<<<<<< Updated upstream
           <Button selected={mapMode === 'write'} onClick={() => setMapMode('write')}>
             <span>📍</span></Button>
           <Button selected={mapMode === 'my'} onClick={() => setMapMode('my')}>
             <span>🔒</span></Button>
           <Button selected={mapMode === 'public'} onClick={() => setMapMode('public')}>
             <span>🌎</span></Button>
+=======
+          <Button selected={mapMode === 'write'} onClick={() => setMapMode('write')}>📍</Button>
+          <Button selected={mapMode === 'my'} onClick={() => setMapMode('my')}>🔒</Button>
+          <Button selected={mapMode === 'public'} onClick={() => setMapMode('public')}>🌎</Button>
+>>>>>>> Stashed changes
         </BottomButtonRow>
       </MapWrapper>
     </Wrapper>
