@@ -61,7 +61,7 @@ const Card = styled.div`
   height: 160px;
   border-radius: 12px;
   background-color: #E1E9F0;
-  box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.25);
   padding: 28px 32px;
   display: flex;
   flex-direction: column;
@@ -90,32 +90,72 @@ const BlackText = styled.span`
   color: #121212;
 `;
 
-const RedText = styled.span`
+const TimeText = styled.span`
   font-size: 20px;
   font-weight: 500;
-  color: #FF3A3A;
+  color: ${({ isOpen }) => (isOpen ? '#448AFF' : '#FF3A3A')};
 `;
 
 const TimePintPage = () => {
-
-  // time PINT 리스트 더미데이터
-  const dummyData = [
-    { id: 1, title: '몰입캠프1', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-    { id: 2, title: '몰입캠프2', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-    { id: 3, title: '몰입캠프3', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-    { id: 4, title: '몰입캠프4', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-    { id: 5, title: '몰입캠프5', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-    { id: 6, title: '몰입캠프6', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-    { id: 7, title: '몰입캠프7', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-    { id: 8, title: '몰입캠프8', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-    { id: 9, title: '몰입캠프9', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-    { id: 10, title: '몰입캠프10', timeLeft: '0년 0개월 0일 0시간 0분 남음' },
-  ];
-
   const [registerPint, setRegisterPint] = useState(false);
   const [viewPint, setViewPint] = useState(null);
+  const [pintList, setPintList] = useState([]);
+  const [time, setTime] = useState({});
 
   const isPopupOpen = registerPint || viewPint;
+
+  const fetchTimePints = async () => {
+    try {
+      const res = await fetch('http://localhost:4000/api/time-pints');
+      const data = await res.json();
+      setPintList(data);
+    } catch (err) {
+      console.error('Time PINT 불러오기 실패:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTimePints();
+  }, []);
+
+  const calculateTimeLeft = (openDate) => {
+    const now = new Date();
+    const target = new Date(openDate);
+
+    if (isNaN(target.getTime())) return '날짜 오류';
+
+    const diff = target - now;
+    if (diff <= 0) return '오픈 가능';
+    
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+
+    return `${years}년 ${months % 12}개월 ${days % 30}일 ${hours % 24}시간 ${minutes % 60}분 ${seconds % 60}초 남음`;
+  };
+
+  useEffect(() => {
+    const updateAllTimeLeft = () => {
+      const updated = {};
+      pintList.forEach((pint) => {
+        updated[pint._id] = calculateTimeLeft(pint.openDate);
+      });
+      setTime(updated);
+    };
+
+    updateAllTimeLeft();
+
+    const interval = setInterval(updateAllTimeLeft, 1000);
+
+    return () => clearInterval(interval);
+  }, [pintList]);
+
+  useEffect(() => {
+    fetchTimePints();
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = isPopupOpen ? 'hidden' : 'auto';
@@ -141,7 +181,12 @@ const TimePintPage = () => {
 
           {/* register Time PINT */}
           {registerPint && (
-            <TimePintRegisterPopup onClose={() => setRegisterPint(false)} />
+            <TimePintRegisterPopup 
+              onClose={() => {
+                setRegisterPint(false);
+                fetchTimePints();
+              }} 
+            />
           )}
 
           {/* view Time PINT */}
@@ -150,14 +195,32 @@ const TimePintPage = () => {
           )}
 
           {/* card data */}
-          {[...dummyData]
-            .sort((a, b) => b.id - a.id)
-            .map((item) => (
-              <Card key={item.id} onClick={() => setViewPint(item)}>
-                <BlackText>{item.title}</BlackText>
-                <RedText>{item.timeLeft}</RedText>
-              </Card>
-          ))}
+          {pintList
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .map((item) => {
+              const timeLeft = calculateTimeLeft(item.openDate);
+              const isOpen = timeLeft === '오픈 가능';
+
+              return (
+                <Card 
+                  key={item._id} 
+                  onClick={() => 
+                    setViewPint({
+                      title: item.name,
+                      timeLeft,
+                      isPublic: item.isPublic,
+                      tags: item.tags,
+                      mediaUrl: item.mediaUrl,
+                      content: item.content,
+                      openDate: item.openDate,
+                    })
+                  }
+                >
+                  <BlackText>{item.name}</BlackText>
+                  <TimeText isOpen={isOpen}>{timeLeft}</TimeText>
+                </Card>
+              );
+          })}
         </ListWrapper>
       </Container>
     </Wrapper>
