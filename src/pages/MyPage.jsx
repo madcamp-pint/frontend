@@ -376,6 +376,78 @@ const ProfileTitle = styled.h2`
   line-height: normal;
 `;
 
+const FriendAdd = styled.h2`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  width: 177px;
+  height: 57px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #7A7A7A;
+  text-align: center;
+  font-family: "Noto Sans";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
+const FriendAddBox = styled.div`
+  position: absolute;
+  top: 80px;
+  left: 50px;
+  width: 289px;
+  height: 67px;
+  flex-shrink: 0;
+  border-radius: 25.5px;
+  background: #FFF;
+  overflow: hidden;
+`;
+
+const FriendAddText = styled.input`
+  position: absolute;
+  top: 16px;
+  left: 28px;
+  display: flex;
+  width: 282px;
+  height: 33px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #C7C7C7;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 200;
+  line-height: normal;
+  border: none;
+  outline: none;
+`;
+
+const FriendList = styled.h2`
+  position: absolute;
+  top: 160px;
+  left: 6px;
+  display: flex;
+  width: 177px;
+  height: 57px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #7A7A7A;
+  text-align: center;
+  font-family: "Noto Sans";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
+
+
 const MyPage = () => {
   const [user, setUser] = useState(null);
   const [introduction, setIntroduction] = useState('');
@@ -386,6 +458,7 @@ const MyPage = () => {
   const [email, setEmail] = useState('');
   const [emailMsg, setEmailMsg] = useState('');
   const [hasEditedUserName, setHasEditedUserName] = useState(false);
+  const [friendAdd, setFriendAdd] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:4000/auth/user', {
@@ -397,7 +470,7 @@ const MyPage = () => {
         setUserName(data?.userName || ''); 
         setIntroduction(data?.introduction || '');
         setLink(data?.link || '');
-        setEmail(data?.email || '');      // userId 필드로 저장되어 있다고 가정
+        setEmail(data?.email || '');  
       })
       .catch(err => console.log(err));
   }, []);
@@ -469,6 +542,23 @@ const MyPage = () => {
     }
   };
 
+  const handleAddFriend = async () => {
+    if (!friendAdd) return;
+    try {
+      const response = await fetch('http://localhost:4000/auth/add', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body:JSON.stringfy({ friendID: friendAdd}),
+      });
+      if (!response.ok) throw new Error('친구 추가 실패');
+      setFriendAdd('');
+      alert('친구 추가 성공');
+    } catch (err) {
+      alert('친구 추가 실패');
+    }
+  };
+
   return (
     <Wrapper>
       <Sidebar />
@@ -531,6 +621,22 @@ const MyPage = () => {
 
       <FriendsBox>
         <ProfileTitle>친구</ProfileTitle>
+        <FriendAdd>친구 추가</FriendAdd>
+        <FriendAddBox>
+          <FriendAddText
+            placeholder='친구 추가'
+            value={friendAdd}
+            onChange={e => {
+              setFriendAdd(e.target.value);
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                handleAddFriend();
+              }
+            }}
+          />
+        </FriendAddBox>
+        <FriendList>친구 목록</FriendList>
       </FriendsBox>
       </Container>
     </Wrapper>
