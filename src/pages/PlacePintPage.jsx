@@ -1,26 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import KakaoMap from '../components/KakaoMap';
 import { Component as NewPost } from '../components/NewPost';
 import SelectedButton from '../assets/images/selected_button.png';
 
-
-  const Wrapper = styled.div`
+const Wrapper = styled.div`
   display: flex;
   width: 100vw;
   height: 100vh;
   background-color: #121212;
-  `;
+`;
 
-  const MapWrapper = styled.div`
+const MapWrapper = styled.div`
   flex: 1;
   margin: 20px 20px 20px 8px;
   border-radius: 20px;
   overflow: hidden;
-  `;
+`;
 
-  const ModalOverlay = styled.div`
+const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -31,9 +30,9 @@ import SelectedButton from '../assets/images/selected_button.png';
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  `;
+`;
 
-  const ModalContent = styled.div`
+const ModalContent = styled.div`
   width: 433px;
   height: 668px;
   flex-shrink: 0;
@@ -42,9 +41,9 @@ import SelectedButton from '../assets/images/selected_button.png';
   position: relative;
   display: flex;
   overflow: hidden;
-  `;
+`;
 
-  const ModalInnerContent = styled.div`
+const ModalInnerContent = styled.div`
   height: 100%;
   width: 100%;
   overflow-y: auto;
@@ -56,10 +55,9 @@ import SelectedButton from '../assets/images/selected_button.png';
     display: none; /* Chrome, Safari, Opera*/
   }
   padding: 0 0 10px 0;
-  `;
+`;
 
-
-  const BottomButtonRow = styled.div`
+const BottomButtonRow = styled.div`
   position: fixed;
   right: 41px;
   bottom: 58px;
@@ -76,9 +74,9 @@ import SelectedButton from '../assets/images/selected_button.png';
   justify-content: space-between;
   align-items: center;
   padding: 20px 0;
-  `;
+`;
 
-  const Button = styled.button`
+const Button = styled.button`
   width: 100%;
   height: 100%;
   background: transparent;
@@ -120,6 +118,9 @@ export default function PlacePintPage() {
   const [myPints, setMyPints] = useState([]);
   const [mapMode, setMapMode] = useState('write');
   const [selectedPint, setSelectedPint] = useState(null);
+
+  const modalRef = useRef(null);
+
   const handleMarkerClick = useCallback((pint) => {
     setSelectedPint(pint);
     setIsModalOpen(true);
@@ -190,10 +191,22 @@ export default function PlacePintPage() {
     };
   }, []);
 
+  // 외부 클릭 시 팝업 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        closeModal();
+      }
+    };
 
-  // useEffect(() => {
-  //   fetchMyPints();
-  // }, [fetchMyPints]);
+    if (isModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isModalOpen]);
 
   return (
     <Wrapper>
@@ -227,7 +240,7 @@ export default function PlacePintPage() {
         )}
         {isModalOpen && (
           <ModalOverlay>
-            <ModalContent>
+            <ModalContent ref={modalRef}>
               <ModalInnerContent>
                 <NewPost
                   onClose={() => {
