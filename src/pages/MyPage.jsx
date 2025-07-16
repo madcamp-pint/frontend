@@ -15,7 +15,7 @@ const Container = styled.div`
   margin: 20px 20px 20px 8px;
   padding: 40px;
   border-radius: 20px;
-  background-color: #fafafa;
+  background-color: #FAFAFA;
   overflow-y: auto;
 `;
 
@@ -78,7 +78,7 @@ const SaveButton = styled.button`
   background: #abd8ff;
   border: none;
   font-weight: 600;
-  color: #FAFAFA;
+  color: #fafafa;
   font-size: 16px;
   cursor: pointer;
   transition: filter 0.2s ease-in-out;
@@ -111,12 +111,23 @@ const NicknameText = styled.h2`
   color: #121212;
 `;
 
+const FriendInputRow = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+`;
+
+const FriendInputWrapper = styled(InputWrapper)`
+  flex: 1;
+`;
+
 const MyPage = () => {
   const [user, setUser] = useState(null);
   const [introduction, setIntroduction] = useState('');
   const [userName, setUserName] = useState('');
   const [link, setLink] = useState('');
   const [email, setEmail] = useState('');
+  const [friendAdd, setFriendAdd] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:4000/auth/user', {
@@ -151,6 +162,23 @@ const MyPage = () => {
       }
     } catch (err) {
       alert('서버 오류');
+    }
+  };
+
+  const handleAddFriend = async () => {
+    if (!friendAdd) return;
+    try {
+      const response = await fetch('http://localhost:4000/auth/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ friendID: friendAdd }),
+      });
+      if (!response.ok) throw new Error('친구 추가 실패');
+      setFriendAdd('');
+      alert('친구 추가 성공');
+    } catch (err) {
+      alert('친구 추가 실패');
     }
   };
 
@@ -215,11 +243,20 @@ const MyPage = () => {
           <Title>친구</Title>
           <FriendsBox>
             <Label>친구 추가</Label>
-            <InputWrapper>
-              <Input placeholder="친구 아이디 입력" />
-            </InputWrapper>
+            <FriendInputRow>
+              <FriendInputWrapper>
+                <Input
+                  placeholder="친구 아이디 입력"
+                  value={friendAdd}
+                  onChange={(e) => setFriendAdd(e.target.value)}
+                />
+              </FriendInputWrapper>
+              <SaveButton onClick={handleAddFriend} style={{ height: '44px', padding: '0 16px' }}>
+                추가
+              </SaveButton>
+            </FriendInputRow>
             <Label style={{ marginTop: '20px' }}>친구 목록</Label>
-            {/* 친구 목록 나열 컴포넌트 들어갈 자리 */}
+            {/* 친구 목록 컴포넌트 자리 */}
           </FriendsBox>
         </ContentSection>
       </Container>
