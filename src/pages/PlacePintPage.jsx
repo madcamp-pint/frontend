@@ -234,7 +234,7 @@ export default function PlacePintPage() {
                     setIsModalOpen(false);
                     setSelectedPint(null);
                   }}
-                  address={selectedPint ? selectedPint.address : address}
+                  address={selectedPint ? selectedPint.location.address || selectedPint.address : address}
                   user={user}
                   position={selectedPint ? {
                     lat: selectedPint.location.coordinates[1],

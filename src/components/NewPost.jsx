@@ -652,7 +652,7 @@ const CancelButtonText = styled.span`
 `;
 
 // Component
-export const Component = ({ onClose, user, position, pint, readOnly, onSaved }) => {
+export const Component = ({ onClose, user, position, pint, readOnly, onSaved, address }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [pintName, setPintName] = useState("");
   const [selectedRadius, setSelectedRadius] = useState(10);
@@ -663,7 +663,7 @@ export const Component = ({ onClose, user, position, pint, readOnly, onSaved }) 
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [caption, setCaption] = useState("");
   const [isEditingCaption, setIsEditingCaption] = useState(false);
-  const [address, setAddress] = useState("");
+  // address state, setAddress, address 관련 useEffect 모두 삭제
 
   useEffect(() => {
     if (pint && readOnly) {
@@ -672,16 +672,20 @@ export const Component = ({ onClose, user, position, pint, readOnly, onSaved }) 
       setLocationHint(pint.location?.hint || pint.locationHint);
       setVisibility(pint.visibility);
       setCaption(pint.caption);
-      setAddress(pint.location?.address || "");
-      // ⭐ 여러 파일(images 배열) 세팅
       setSelectedFiles(Array.isArray(pint.images) ? pint.images : []);
+      console.log('읽기모드 pint.images:', pint.images);
     }
   }, [pint, readOnly]);
 
+  // selectedFiles 상태가 바뀔 때마다 콘솔로 확인
+  useEffect(() => {
+    console.log('selectedFiles 상태 변경:', selectedFiles);
+  }, [selectedFiles]);
+
   // 저장 핸들러
   const handleSave = async () => {
-    if (!pintName || !address || selectedFiles.length === 0) {
-      alert('핀트 이름, 주소, 파일을 모두 입력해주세요.');
+    if (!pintName) {
+      alert('핀트 이름을 모두 입력해주세요.');
       return;
     }
     const formData = new FormData();
@@ -748,6 +752,23 @@ export const Component = ({ onClose, user, position, pint, readOnly, onSaved }) 
 
   const handleRemoveFile = (indexToRemove) => {
     setSelectedFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleDelete = async () => {
+    if (!pint || !pint._id) return;
+    if (!window.confirm('해당 핀트를 삭제합니다')) return;
+    try {
+      const response = await fetch(`http://localhost:4000/api/pints/${pint._id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error('삭제 실패');
+      if (onSaved) setTimeout(onSaved, 200);
+      onClose();
+    } catch (err) {
+      alert('삭제에 실패했습니다. 다시 시도해주세요.');
+      console.error('핀트 삭제 에러:', err);
+    }
   };
 
   const renderPintName = () => {
@@ -834,15 +855,37 @@ export const Component = ({ onClose, user, position, pint, readOnly, onSaved }) 
             <UploadBox alt="Upload box" src={uploadBox} />
             <UploadMax alt="Upload max" src={uploadMax} />
             <UploadPlusIcon alt="Upload plus icon" src={uploadPlusIcon} />
+            {console.log('렌더링시 selectedFiles:', selectedFiles)}
             {selectedFiles.length > 0 && (
               <UploadedFilesContainer>
                 {selectedFiles.map((file, index) => {
-                  const fileName = typeof file === "string"
-                    ? file.split('/').pop()
-                    : file.name;
+                  let fileName = "";
+                  if (typeof file === "string") {
+                    fileName = file.split('/').pop() || "";
+                  } else if (file && file.name) {
+                    fileName = file.name;
+                  }
                   return (
                     <UploadFileNameBox key={index}>
-                      <DeleteButton style = {{ visibility: "hidden "}}>x</DeleteButton>
+                      <button
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: '#888',
+                          fontSize: '18px',
+                          cursor: 'pointer',
+                          marginRight: '6px',
+                        }}
+                        onClick={e => {
+                          e.stopPropagation();
+                          setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+                        }}
+                        aria-label="x"
+                        type="button"
+                        disabled={readOnly}
+                      >
+                        ×
+                      </button>
                       <UploadedFileNameText>{fileName}</UploadedFileNameText>
                     </UploadFileNameBox>
                   );
@@ -872,11 +915,26 @@ export const Component = ({ onClose, user, position, pint, readOnly, onSaved }) 
                     : file.name;
                   return (
                     <UploadFileNameBox key={index}>
-                      <img
-                        src={typeof file === "string" ? file : URL.createObjectURL(file)}
-                        alt={fileName}
-                        style={{ maxWidth: 80, maxHeight: 80, marginRight: 8 }}
-                      />
+                      <button
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: '#888',
+                          fontSize: '18px',
+                          cursor: 'pointer',
+                          marginRight: '6px',
+                        }}
+                        onClick={e => {
+                          e.stopPropagation();
+                          // 파일 삭제
+                          setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+                        }}
+                        aria-label="x"
+                        type="button"
+                        disabled={readOnly}
+                      >
+                        ×
+                      </button>
                       <UploadedFileNameText>{fileName}</UploadedFileNameText>
                     </UploadFileNameBox>
                   );
@@ -924,7 +982,11 @@ export const Component = ({ onClose, user, position, pint, readOnly, onSaved }) 
       </OverlapGroup>
       <BottomButtonRow>
         <CancelButton onClick={onClose}><CancelButtonText>취소</CancelButtonText></CancelButton>
-        <SaveButton onClick={handleSave}><SaveButtonText>저장</SaveButtonText></SaveButton>
+        {readOnly ? (
+          <SaveButton onClick={handleDelete}><SaveButtonText>삭제</SaveButtonText></SaveButton>
+        ) : (
+          <SaveButton onClick={handleSave}><SaveButtonText>저장</SaveButtonText></SaveButton>
+        )}
       </BottomButtonRow>
     </ComponentWrapper>
   );

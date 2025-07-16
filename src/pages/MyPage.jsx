@@ -385,6 +385,7 @@ const MyPage = () => {
   const [link, setLink] = useState('');
   const [email, setEmail] = useState('');
   const [emailMsg, setEmailMsg] = useState('');
+  const [hasEditedUserName, setHasEditedUserName] = useState(false);
 
   useEffect(() => {
     fetch('http://localhost:4000/auth/user', {
@@ -393,7 +394,10 @@ const MyPage = () => {
       .then(res => res.json())
       .then(data => {
         setUser(data);
-        setUserName(data?.userName || '');      // userId 필드로 저장되어 있다고 가정
+        setUserName(data?.userName || ''); 
+        setIntroduction(data?.introduction || '');
+        setLink(data?.link || '');
+        setEmail(data?.email || '');      // userId 필드로 저장되어 있다고 가정
       })
       .catch(err => console.log(err));
   }, []);
@@ -402,6 +406,7 @@ const MyPage = () => {
     if (!userName) {
       setIsDuplicate(false);
       setDuplicateMsg('');
+      setHasEditedUserName(false);
       return;
     }
     const timer = setTimeout(() => {
@@ -483,7 +488,7 @@ const MyPage = () => {
         </IntroductionTextBox>
         <UserName>
           사용자 이름 
-          <DuplicateMsg duplicate={isDuplicate}>{duplicateMsg}</DuplicateMsg>
+          {hasEditedUserName && <DuplicateMsg duplicate={isDuplicate}>{duplicateMsg}</DuplicateMsg>}
         </UserName>
         <UserNameTextBox>
           <UserNameText
@@ -492,6 +497,7 @@ const MyPage = () => {
             onChange={e => {
               const onlyEnglish = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
               setUserName(onlyEnglish);
+              setHasEditedUserName(true);
             }}
           />
         </UserNameTextBox>
@@ -502,8 +508,7 @@ const MyPage = () => {
             placeholder='링크를 입력해주세요'
             value={link}
             onChange={e => {
-              const linkOnlyEnglish = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
-              setLink(linkOnlyEnglish);
+              setLink(e.target.value);
             }}
           />
         </LinkTextBox>
