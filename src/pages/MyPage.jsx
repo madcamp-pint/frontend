@@ -2,18 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import PintIcon from '../assets/images/pint.png';
-// const InputBox = styled.div`
-
-const Container = styled.div`
-  flex: 1;
-  margin: 20px 20px 20px 8px;
-  padding: 40px;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  background-color: #FAFAFA;
-  overflow-y: auto;
-`;
 
 const Wrapper = styled.div`
   display: flex;
@@ -22,511 +10,146 @@ const Wrapper = styled.div`
   background-color: #121212;
 `;
 
-const Profile = styled.h1`
-  position: absolute;
-  top: 35px;
-  left: 160px;
-  z-index: 1px;
-  color: #000;
-  text-align: center;
-  font-family: "Noto Sans";
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 300;
-  line-height: normal;
+const Container = styled.div`
+  flex: 1;
+  margin: 20px 20px 20px 8px;
+  padding: 40px;
+  border-radius: 20px;
+  background-color: #FAFAFA;
+  overflow-y: auto;
+`;
+
+const ContentSection = styled.div`
   display: flex;
-  width: 177px;
-  height: 57px;
   flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  font-weight: 500;
+  gap: 8px;
+`;
+
+const Title = styled.h1`
+  font-size: 30px;
+  font-weight: bold;
+  color: #000;
 `;
 
 const ProfileBox = styled.div`
-  position: relative;
-  top: 55px;
-  left: 82px;
-  z-index: 1px;
-  width: 1114px;
-  height: 267px;
-  flex-shrink: 0;
-  border-radius: 64px;
-  background: #E1E9F0;
-`;
-
-const ProfilePint = styled.img`
-  position: absolute;
-  top: 60px;
-  left: 39px;
-  z-index: 1px;
-  width: 37px;
-  height: 37px;
-  flex-shrink: 0;
-  aspect-ratio: 1/1;
-`;
-
-const ProfileName = styled.h2`
-  position: absolute;
-  left: 90px;
-  top: 28px;
+  background: #e1e9f0;
+  border-radius: 20px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #000;
-  font-family: "Noto Sans";
-  font-size: 40px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  gap: 16px;
 `;
 
-const Introduction = styled.h2`
-  position: absolute;
-  left: 63px;
-  top: 125px;
+const FlexRow = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
+  gap: 24px;
+`;
+
+const InputGroup = styled.div`
+  flex: 1;
+`;
+
+const Label = styled.label`
+  font-size: 16px;
   color: #747474;
-  font-family: "Noto Sans";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  margin-bottom: 8px;
+  display: block;
 `;
 
-const IntroductionTextBox = styled.div`
-  position: absolute;
-  left: 57px;
-  top: 165px;
-  width: 388px;
-  height: 51px;
-  flex-shrink: 0;
+const InputWrapper = styled.div`
+  background: #fff;
   border-radius: 25.5px;
-  background: #FFF;
-  overflow: hidden;
+  padding: 12px 20px;
 `;
 
-const IntroductionText = styled.input`
-  position: absolute;
-  top: 0;
-  left: 21px;
-  display: flex;
-  width: 344px;
-  height: 51px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #000;
-  font-family: "Noto Sans";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 100;
-  line-height: normal;
+const Input = styled.input`
   border: none;
   outline: none;
-  overflow: hidden;
-`;
-
-const UserName = styled.h2`
-  position: absolute;
-  top: 26px;
-  left: 483px;
-  display: flex;
-  align-items: left;
-  width: 300px;
-  height: 24px;
-  flex-shrink: 0;
-  color: #747474;
-  font-family: "Noto Sans";
+  width: 100%;
   font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  background: transparent;
 `;
-
-const DuplicateMsg = styled.span`
-  margin-left: 80px;
-  color: ${props => props.duplicate ? 'red' : 'green'};
-  font-size: 12px;
-  font-weight: 400;
-  white-space: nowrap;
-`;
-
-const UserNameTextBox = styled.div`
-  position: absolute;
-  top: 67px;
-  left: 472px;
-  width: 279px;
-  height: 51px;
-  flex-shrink: 0;
-  border-radius: 25.5px;
-  background: #FFF;
-  overflow: hidden;
-`;
-
-const UserNameText = styled.input`
-  position: absolute;
-  top: 0;
-  left: 23px;
-  display: flex;
-  width: 212px;
-  height: 51px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  font-family: "Noto Sans";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 100;
-  line-height: normal;
-  border: none;
-  outline: none;
-`;
-
-const Link = styled.h2`
-  position: absolute;
-  top: 127px;
-  left: 479px;
-  display: flex;
-  width: 108px;
-  height: 24px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #747474;
-  font-family: "Noto Sans";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-`;
-
-const LinkTextBox = styled.div`
-  position: absolute;
-  top: 165px;
-  left: 472px;
-  width: 279px;
-  height: 51px;
-  flex-shrink: 0;
-  border-radius: 25.5px;
-  background: #FFF;
-  overflow: hidden;
-`;
-
-const LinkText = styled.input`
-  position: absolute;
-  top: 0;
-  left: 23px;
-  display: flex;
-  width: 212px;
-  height: 51px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #000;
-  font-family: "Noto Sans";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 100;
-  line-height: normal;
-  border: none;
-  outline: none;
-  &::placeholder {
-`;
-
-const Email = styled.h2`
-  position: absolute;
-  position: relative;
-  top: 23px;
-  left: 810px;
-  display: flex;
-  width: 400px;
-  height: 24px;
-  // flex-direction: column;
-  // justify-content: center;
-  flex-shrink: 0;
-  color: #747474;
-  font-family: "Noto Sans";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-`;
-
-const EmailTextBox = styled.div`
-  position: absolute;
-  top: 65px;
-  left: 800px;
-  display: flex;
-  width: 257px;
-  height: 51px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  border-radius: 25.5px;
-  background: #FFF;
-  overflow: hidden;
-`;
-
-const EmailText = styled.input`
-  position: absolute;
-  top: 0;
-  left: 23px;
-  display: flex;
-  width: 212px;
-  height: 51px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #000;
-  font-family: "Noto Sans";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 100;
-  line-height: normal;
-  border: none;
-  outline: none;
-`;
-
-const EmailLabel = styled.h2`
-  position: absolute;
-  top: 21px;
-  left: 800px;
-  display: flex;
-  width: 108px;
-  height: 24px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #747474;
-  font-family: "Noto Sans";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  display: flex;
-  align-items: center;
-`;
-
 
 const SaveButton = styled.button`
-  position: absolute;
-  top: 171px;
-  left: 949px;
+  align-self: flex-end;
   width: 108px;
-  height: 51px;
-  flex-shrink: 0;
-  border: none;
-  outline: none;
+  height: 40px;
   border-radius: 25.5px;
-  background: #ABD8FF;
-`;
-
-const SaveText = styled.h2`
-  position: absolute;
-  top: -2px;
-  left: 20px;
-  display: flex;
-  width: 68px;
-  height: 31px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #FFF;
-  text-align: center;
-  font-family: "Noto Sans";
-  font-size: 16px;
-  font-style: normal;
+  background: #abd8ff;
+  border: none;
   font-weight: 600;
-  line-height: normal;
+  color: #fafafa;
+  font-size: 16px;
+  cursor: pointer;
+  transition: filter 0.2s ease-in-out;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
 `;
 
 const FriendsBox = styled.div`
-  position: absolute;
-  top: 450px;
-  left: 208px;
-  z-index: 1px;
-  width: 1114px;
-  height: 320px;
-  flex-shrink: 0;
-  border-radius: 64px;
-  background: #E1E9F0;
+  background: #e1e9f0;
+  border-radius: 20px;
+  padding: 32px;
 `;
 
-const ProfileTitle = styled.h2`
-  position: absolute;
-  top: -80px;
-  left: -60px;
+const NicknameRow = styled.div`
   display: flex;
-  width: 177px;
-  height: 57px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #000;
-  text-align: center;
-  font-family: "Noto Sans";
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
+  align-items: center;
+  gap: 12px;
 `;
 
-const FriendAdd = styled.h2`
-  position: absolute;
-  top: 10px;
-  left: 10px;
+const NicknameIcon = styled.img`
+  width: 32px;
+  height: 32px;
+`;
+
+const NicknameText = styled.h2`
+  font-size: 28px;
+  font-weight: bold;
+  color: #121212;
+`;
+
+const FriendInputRow = styled.div`
   display: flex;
-  width: 177px;
-  height: 57px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #7A7A7A;
-  text-align: center;
-  font-family: "Noto Sans";
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  gap: 12px;
+  align-items: center;
 `;
 
-const FriendAddBox = styled.div`
-  position: absolute;
-  top: 80px;
-  left: 50px;
-  width: 289px;
-  height: 67px;
-  flex-shrink: 0;
-  border-radius: 25.5px;
-  background: #FFF;
-  overflow: hidden;
+const FriendInputWrapper = styled(InputWrapper)`
+  flex: 1;
 `;
-
-const FriendAddText = styled.input`
-  position: absolute;
-  top: 16px;
-  left: 28px;
-  display: flex;
-  width: 282px;
-  height: 33px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #C7C7C7;
-  font-family: Inter;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 200;
-  line-height: normal;
-  border: none;
-  outline: none;
-`;
-
-const FriendList = styled.h2`
-  position: absolute;
-  top: 160px;
-  left: 6px;
-  display: flex;
-  width: 177px;
-  height: 57px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #7A7A7A;
-  text-align: center;
-  font-family: "Noto Sans";
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-`;
-
-
 
 const MyPage = () => {
   const [user, setUser] = useState(null);
   const [introduction, setIntroduction] = useState('');
   const [userName, setUserName] = useState('');
-  const [isDuplicate, setIsDuplicate] = useState(false);
-  const [duplicateMsg, setDuplicateMsg] = useState('');
   const [link, setLink] = useState('');
   const [email, setEmail] = useState('');
-  const [emailMsg, setEmailMsg] = useState('');
-  const [hasEditedUserName, setHasEditedUserName] = useState(false);
   const [friendAdd, setFriendAdd] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:4000/auth/user', {
       credentials: 'include',
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setUser(data);
-        setUserName(data?.userName || ''); 
+        setUserName(data?.userName || '');
         setIntroduction(data?.introduction || '');
         setLink(data?.link || '');
-        setEmail(data?.email || '');  
+        setEmail(data?.email || '');
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
 
-  useEffect(() => {
-    if (!userName) {
-      setIsDuplicate(false);
-      setDuplicateMsg('');
-      setHasEditedUserName(false);
-      return;
-    }
-    const timer = setTimeout(() => {
-      fetch(`http://localhost:4000/auth/check-username?username=${encodeURIComponent(userName)}`)
-        .then(res => res.json())
-        .then(data => {
-          setIsDuplicate(data.duplicate);
-          setDuplicateMsg(data.duplicate ? '이미 사용 중인 ID입니다.' : '사용 가능한 ID입니다.');
-        })
-        .catch(err => {
-          setIsDuplicate(false);
-          setDuplicateMsg('중복 체크 실패');
-        });
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [userName]);
-
-  const isValidEmail = (value) => {
-    // 간단한 이메일 정규식
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  };
-
-  const handleEmailChange = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-
-    if (value && !isValidEmail(value)) {
-      setEmailMsg('이메일 형식이 아닙니다.');
-    } else {
-      setEmailMsg('');
-    }
-  };
-
   const handleSave = async () => {
-    const data = {
-      introduction,
-      userName,
-      link,
-      email,
-    };
-
+    const data = { introduction, userName, link, email };
     try {
       const response = await fetch('http://localhost:4000/auth/update-profile', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(data),
       });
@@ -546,7 +169,7 @@ const MyPage = () => {
     if (!friendAdd) return;
     try {
       const response = await fetch('http://localhost:4000/auth/add', {
-        method: "POST",
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ friendID: friendAdd }),
@@ -563,84 +186,82 @@ const MyPage = () => {
     <Wrapper>
       <Sidebar />
       <Container>
-      <ProfileBox>
-        <ProfilePint src={PintIcon} alt='pint_icon' />
-        <ProfileName>
-          {user?.nickname || '로그인이 필요합니다'}
-        </ProfileName>
-        <Introduction>소개</Introduction>
-        <IntroductionTextBox>
-          <IntroductionText 
-            placeholder='소개글을 입력해주세요.'
-            value={introduction}
-            onChange={(e) => setIntroduction(e.target.value)}
-          />
-        </IntroductionTextBox>
-        <UserName>
-          사용자 이름 
-          {hasEditedUserName && <DuplicateMsg duplicate={isDuplicate}>{duplicateMsg}</DuplicateMsg>}
-        </UserName>
-        <UserNameTextBox>
-          <UserNameText
-            placeholder='사용할 ID를 입력해주세요'
-            value={userName}
-            onChange={e => {
-              const onlyEnglish = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
-              setUserName(onlyEnglish);
-              setHasEditedUserName(true);
-            }}
-          />
-        </UserNameTextBox>
-        <Link>링크</Link>
-        <LinkTextBox>
-          <LinkText
-            type='url'
-            placeholder='링크를 입력해주세요'
-            value={link}
-            onChange={e => {
-              setLink(e.target.value);
-            }}
-          />
-        </LinkTextBox>
-        <Email>
-          이메일
-          <DuplicateMsg duplicate={!!emailMsg}>{emailMsg}</DuplicateMsg>
-        </Email>
-        <EmailTextBox>
-          <EmailText
-            placeholder='이메일을 입력해주세요'
-            value={email}
-            onChange={handleEmailChange}
-          />
-        </EmailTextBox>
-        <SaveButton onClick={handleSave}>
-          <SaveText>저장</SaveText>
-        </SaveButton>
-      </ProfileBox>
-      <Profile>프로필</Profile>
+        <ContentSection>
+          <Title>프로필</Title>
+          <ProfileBox>
+            <NicknameRow>
+              <NicknameIcon src={PintIcon} alt="pint" />
+              <NicknameText>{user?.nickname || '로그인이 필요합니다'}</NicknameText>
+            </NicknameRow>
+            <FlexRow>
+              <InputGroup>
+                <Label>사용자 ID</Label>
+                <InputWrapper>
+                  <Input
+                    placeholder="사용자 이름"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                  />
+                </InputWrapper>
+              </InputGroup>
+              <InputGroup>
+                <Label>소개</Label>
+                <InputWrapper>
+                  <Input
+                    placeholder="소개글을 입력해주세요"
+                    value={introduction}
+                    onChange={(e) => setIntroduction(e.target.value)}
+                  />
+                </InputWrapper>
+              </InputGroup>
+            </FlexRow>
+            <FlexRow>
+              <InputGroup>
+                <Label>링크</Label>
+                <InputWrapper>
+                  <Input
+                    placeholder="링크를 입력해주세요"
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
+                  />
+                </InputWrapper>
+              </InputGroup>
+              <InputGroup>
+                <Label>이메일</Label>
+                <InputWrapper>
+                  <Input
+                    placeholder="이메일을 입력해주세요"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </InputWrapper>
+              </InputGroup>
+            </FlexRow>
+            <SaveButton onClick={handleSave}>저장</SaveButton>
+          </ProfileBox>
 
-      <FriendsBox>
-        <ProfileTitle>친구</ProfileTitle>
-        <FriendAdd>친구 추가</FriendAdd>
-        <FriendAddBox>
-          <FriendAddText
-            placeholder='친구 추가'
-            value={friendAdd}
-            onChange={e => {
-              setFriendAdd(e.target.value);
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                handleAddFriend();
-              }
-            }}
-          />
-        </FriendAddBox>
-        <FriendList>친구 목록</FriendList>
-      </FriendsBox>
+          <Title>친구</Title>
+          <FriendsBox>
+            <Label>친구 추가</Label>
+            <FriendInputRow>
+              <FriendInputWrapper>
+                <Input
+                  placeholder="친구 아이디 입력"
+                  value={friendAdd}
+                  onChange={(e) => setFriendAdd(e.target.value)}
+                />
+              </FriendInputWrapper>
+              <SaveButton onClick={handleAddFriend} style={{ height: '44px', padding: '0 16px' }}>
+                추가
+              </SaveButton>
+            </FriendInputRow>
+            <Label style={{ marginTop: '20px' }}>친구 목록</Label>
+            {/* 친구 목록 컴포넌트 자리 */}
+          </FriendsBox>
+        </ContentSection>
       </Container>
     </Wrapper>
   );
-}
+};
 
 export default MyPage;

@@ -183,7 +183,7 @@ const PlacePintWrapper = styled.div`
 
 const MapWrapper = styled.div`
   width: 100%;
-  height: 320px;
+  height: 380px;
   border: 1px solid #777777;
   border-radius: 8px;
   overflow: hidden;
@@ -216,7 +216,7 @@ const ListWrapper = styled.div`
   align-items: flex-start;
   justify-content: center;
   width: 100%;
-  max-height: 240px;
+  min-height: 180px;
   border: 1px solid #777777;
   border-radius: 8px;
   overflow-y: auto;
@@ -391,7 +391,7 @@ const MainPage = () => {
             
             {/* KakaoMap */}
             <MapWrapper>
-              <KakaoMap width="100%" height="320px" />
+              <KakaoMap width="100%" height="380px" />
               <ExpandButton
                 src={expandIcon}
                 alt='expand'
