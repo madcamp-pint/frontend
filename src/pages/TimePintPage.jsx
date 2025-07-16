@@ -114,10 +114,6 @@ const TimePintPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTimePints();
-  }, []);
-
   const calculateTimeLeft = (openDate) => {
     const now = new Date();
     const target = new Date(openDate);
