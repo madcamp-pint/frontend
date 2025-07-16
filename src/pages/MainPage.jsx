@@ -213,14 +213,14 @@ const TimePintWrapper = styled.div`
 
 const ListWrapper = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   width: 100%;
-  height: 240px;
+  max-height: 240px;
   border: 1px solid #777777;
   border-radius: 8px;
   overflow-y: auto;
-  padding: 30px 24px;
+  padding: 20px 28px;
   box-sizing: border-box;
 
   &::-webkit-scrollbar {
@@ -232,12 +232,10 @@ const Column = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px;
 `;
 
 const Divider = styled.div`
-  width: 1px;
-  background-color: #777777;
   margin: 0 24px;
   align-self: stretch;
 `;
@@ -261,7 +259,9 @@ const OrangeDot = styled.span`
 const ItemText = styled.div`
   font-size: 20px;
   font-weight: bold;
-  margin-right: 120px;
+  text-align: left;
+  margin-left: 10px;
+  flex: 1;
 `;
 
 const CountDown = styled.span`
@@ -274,9 +274,11 @@ const MainPage = () => {
   const [user, setUser] = useState(null);
   const [isDropdown, setIsDropdown] = useState(false);
   const dropdownRef = useRef(null);
-  const [isFriendModalOpen, setFriendModalOpen] = useState(false);
+  
+  const [pintList, setPintList] = useState([]);
+  const [time, setTime] = useState({});
 
-  // 유저 정보 가져오기
+  // 유저 정보 GET
   useEffect(() => {
     fetch('http://localhost:4000/auth/user', {
       credentials: 'include',
@@ -298,12 +300,58 @@ const MainPage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // time PINT 리스트 더미데이터
-  const dummyData = Array.from({ length: 10 }, (_, i) => ({
-    id: i,
-    label: '몰입캠프',
-    countdown: 'n년 n개월 n일 n시간 n분 남음',
-  }));
+  // time PINT 리스트 GET
+  const fetchTimePints = async () => {
+    try {
+      const res = await fetch('http://localhost:4000/api/time-pints');
+      const data = await res.json();
+      setPintList(data);
+    } catch (err) {
+      console.error('Time PINT 불러오기 실패:', err);
+    }
+  };
+
+  // 남은 시간 계산
+  const calculateTimeLeft = (openDate) => {
+    const now = new Date();
+    const target = new Date(openDate);
+
+    if (isNaN(target.getTime())) return '날짜 오류';
+
+    const diff = target - now;
+    if (diff <= 0) return '오픈 가능';
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+
+    return `${years}년 ${months % 12}개월 ${days % 30}일 ${hours % 24}시간 ${minutes % 60}분 ${seconds % 60}초 남음`;
+  };
+
+  useEffect(() => {
+    fetchTimePints();
+  }, []);
+
+  useEffect(() => {
+    const updateAllTimeLeft = () => {
+      const updated = {};
+      pintList.forEach((pint) => {
+        updated[pint._id] = calculateTimeLeft(pint.openDate);
+      });
+      setTime(updated);
+    };
+
+    updateAllTimeLeft();
+    const interval = setInterval(updateAllTimeLeft, 1000);
+
+    return () => clearInterval(interval);
+  }, [pintList]);
+
+  const leftColumn = pintList.filter((_, i) => i % 2 === 0);
+  const rightColumn = pintList.filter((_, i) => i % 2 === 1);
 
   return (
     <Wrapper>
@@ -361,11 +409,11 @@ const MainPage = () => {
 
             <ListWrapper>
               <Column>
-                {dummyData.slice(0, 5).map(item => (
-                  <ListItem key={item.id}>
+                {leftColumn.map(item => (
+                  <ListItem key={item._id}>
                     <OrangeDot />
-                    <ItemText>{item.label}</ItemText>
-                    <CountDown>{item.countdown}</CountDown>
+                    <ItemText>{item.name}</ItemText>
+                    <CountDown>{time[item._id] || 'loading..'}</CountDown>
                   </ListItem>
                 ))}
               </Column>
@@ -373,11 +421,11 @@ const MainPage = () => {
               <Divider />
               
               <Column>
-                {dummyData.slice(0, 5).map(item => (
-                  <ListItem key={item.id}>
+                {rightColumn.map(item => (
+                  <ListItem key={item._id}>
                     <OrangeDot />
-                    <ItemText>{item.label}</ItemText>
-                    <CountDown>{item.countdown}</CountDown>
+                    <ItemText>{item.name}</ItemText>
+                    <CountDown>{time[item._id] || 'loading..'}</CountDown>
                   </ListItem>
                 ))}
               </Column>
@@ -385,7 +433,6 @@ const MainPage = () => {
           </TimePintWrapper>
         </ContentWrapper>
       </Container>
-      {/* <FriendModal open={isFriendModalOpen} onClose={() => setFriendModalOpen(false)} /> */}
     </Wrapper>
   )
 }
